@@ -339,7 +339,7 @@ $(function () {
         const arg = match[2]
         activateTab($(`a[href='#${method}-input']`))
         return $(`#${method}-input input:first`)
-          .val(arg)
+          .val(decodeURIComponent(arg))
           .trigger('change')
       }
     }
