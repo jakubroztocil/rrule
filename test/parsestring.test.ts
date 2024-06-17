@@ -88,4 +88,17 @@ describe('parseString', () => {
       expect(parseString(s)).toEqual(s2)
     })
   })
+
+  it('parses a dtstart with a year lower than 10', () => {
+    const expectations: [string, Partial<Options>][] = [
+      ['DTSTART:00,40101T000000Z', { dtstart: datetime(4, 1, 1) }],
+    ]
+
+    expectations.forEach(function (item) {
+      const s = item[0]
+      const s2 = item[1]
+
+      expect(parseString(s)).toEqual(s2)
+    })
+  })
 })

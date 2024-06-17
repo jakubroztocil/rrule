@@ -3,6 +3,10 @@ import { Time } from './datetime'
 
 type Datelike = Pick<Date, 'getTime'>
 
+const setFullYear = function (date: Date, y: number) {
+  return new Date(new Date(date).setUTCFullYear(y))
+}
+
 export const datetime = function (
   y: number,
   m: number,
@@ -11,7 +15,7 @@ export const datetime = function (
   i = 0,
   s = 0
 ) {
-  return new Date(Date.UTC(y, m - 1, d, h, i, s))
+  return setFullYear(new Date(Date.UTC(y, m - 1, d, h, i, s)), y)
 }
 
 /**
@@ -192,15 +196,18 @@ export const untilStringToDate = function (until: string) {
 
   if (!bits) throw new Error(`Invalid UNTIL value: ${until}`)
 
-  return new Date(
-    Date.UTC(
-      parseInt(bits[1], 10),
-      parseInt(bits[2], 10) - 1,
-      parseInt(bits[3], 10),
-      parseInt(bits[5], 10) || 0,
-      parseInt(bits[6], 10) || 0,
-      parseInt(bits[7], 10) || 0
-    )
+  return setFullYear(
+    new Date(
+      Date.UTC(
+        parseInt(bits[1], 10),
+        parseInt(bits[2], 10) - 1,
+        parseInt(bits[3], 10),
+        parseInt(bits[5], 10) || 0,
+        parseInt(bits[6], 10) || 0,
+        parseInt(bits[7], 10) || 0
+      )
+    ),
+    parseInt(bits[1], 10)
   )
 }
 
