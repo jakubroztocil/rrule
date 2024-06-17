@@ -5,6 +5,7 @@ import { Days } from './rrule'
 
 export function parseString(rfcString: string): Partial<Options> {
   const options = rfcString
+    .replace(/DTSTART:00,/, 'DTSTART:000')
     .split('\n')
     .map(parseLine)
     .filter((x) => x !== null)
