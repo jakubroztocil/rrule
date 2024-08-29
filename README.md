@@ -765,6 +765,8 @@ be used by default.
   [python-dateutil](https://labix.org/python-dateutil#head-a65103993a21b717f6702063f3717e6e75b4ba66),
   which has the same non-compliant functionality. Note that you can get the
   original behavior by using a `RRuleSet` and adding the `dtstart` as an `rdate`.
+  To be clear in the RFC [here](https://icalendar.org/iCalendar-RFC-5545/3-8-5-2-recurrence-date-times.html) it is stated that "The DTSTART property defines the first instance in the recurrence set. The DTSTART property value SHOULD match the pattern of the recurrence rule, if specified. The recurrence set generated with a DTSTART property value that doesn't match the pattern of the rule is undefined."
+  Therefore a feed with a DTSTART that does not fit in the specified rules is non RFC compliant anyways.
 
 ```javascript
 var rruleSet = new RRuleSet()
