@@ -2,7 +2,6 @@
   "compilerOptions": {
     "noEmit": true,
     "noImplicitAny": true,
-    "sourceMap": true,
     "module": "commonjs",
     "noEmitOnError": true,
     "esModuleInterop": true,
