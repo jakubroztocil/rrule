@@ -87,5 +87,6 @@
   "peerDependencies": {},
   "dependencies": {
     "tslib": "^2.4.0"
-  }
+  },
+  "packageManager": "yarn@1.22.22"
 }
