@@ -265,9 +265,11 @@ export default class ToText {
         this.add(gettext('on')).add(gettext('weekdays'))
       }
     } else if (this.byweekday && this.byweekday.isEveryDay) {
-      this.add(
-        this.plural(this.options.interval) ? gettext('days') : gettext('day')
-      )
+      if (this.plural(this.options.interval)) {
+        this.add(gettext('on')).add(gettext('every')).add(gettext('day'))
+      } else {
+        this.add(gettext('day'))
+      }
     } else {
       if (this.options.interval === 1) this.add(gettext('week'))
 

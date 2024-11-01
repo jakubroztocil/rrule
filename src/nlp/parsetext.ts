@@ -251,6 +251,25 @@ export default function parseText(text: string, language: Language = ENGLISH) {
     const the = ttr.accept('the')
     if (!(on || the)) return
 
+    const every = ttr.accept('every')
+
+    if (every) {
+      const day = ttr.accept('day(s)')
+      if (day) {
+        options.byweekday = [
+          RRule.MO,
+          RRule.TU,
+          RRule.WE,
+          RRule.TH,
+          RRule.FR,
+          RRule.SA,
+          RRule.SU,
+        ]
+      }
+
+      return
+    }
+
     do {
       const nth = decodeNTH()
       const wkd = decodeWKD()

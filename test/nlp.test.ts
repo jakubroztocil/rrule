@@ -17,6 +17,11 @@ const texts = [
   ['Every week on Monday, Wednesday', 'RRULE:FREQ=WEEKLY;BYDAY=MO,WE'],
   ['Every weekday', 'RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR'],
   ['Every 2 weeks', 'RRULE:INTERVAL=2;FREQ=WEEKLY'],
+  [
+    'Every 2 weeks on every day',
+    'RRULE:INTERVAL=2;FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR,SA,SU',
+  ],
+  ['Every 2 weeks on Monday', 'RRULE:INTERVAL=2;FREQ=WEEKLY;BYDAY=MO'],
   ['Every month', 'RRULE:FREQ=MONTHLY'],
   ['Every 6 months', 'RRULE:INTERVAL=6;FREQ=MONTHLY'],
   ['Every year', 'RRULE:FREQ=YEARLY'],
