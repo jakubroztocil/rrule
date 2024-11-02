@@ -32,6 +32,45 @@ const texts = [
   ['Every week for 20 times', 'RRULE:FREQ=WEEKLY;COUNT=20'],
 ]
 
+const fromTexts = [
+  ...texts,
+  // Testing more flexible weekday formats
+  ['Every Mon & Wed', 'RRULE:FREQ=WEEKLY;BYDAY=MO,WE'],
+  ['Every Mon and Wed', 'RRULE:FREQ=WEEKLY;BYDAY=MO,WE'],
+  ['Every Tues & Thurs', 'RRULE:FREQ=WEEKLY;BYDAY=TU,TH'],
+  ['Every tu. and thurs. & wed.', 'RRULE:FREQ=WEEKLY;BYDAY=TU,TH,WE'],
+
+  // Testing business/work day variations
+  ['Every business day', 'RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR'],
+  ['Every work day', 'RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR'],
+
+  // Testing month abbreviations
+  ['Every month in Jan', 'RRULE:FREQ=MONTHLY;BYMONTH=1'],
+  ['Every week in Sept.', 'RRULE:FREQ=WEEKLY;BYMONTH=9'],
+  ['Every day in Dec.', 'RRULE:FREQ=DAILY;BYMONTH=12'],
+
+  // Testing time unit variations
+  ['Every hr', 'RRULE:FREQ=HOURLY'],
+  ['Every 2 hrs', 'RRULE:INTERVAL=2;FREQ=HOURLY'],
+  ['Every min', 'RRULE:FREQ=MINUTELY'],
+  ['Every 5 mins', 'RRULE:INTERVAL=5;FREQ=MINUTELY'],
+
+  // Testing @ symbol for at
+  ['Every day @ 10', 'RRULE:FREQ=DAILY;BYHOUR=10'],
+  ['Every week @ 9', 'RRULE:FREQ=WEEKLY;BYHOUR=9'],
+
+  // Testing plural variations of days
+  ['Every Monday and Wednesdays', 'RRULE:FREQ=WEEKLY;BYDAY=MO,WE'],
+  ['Every Tuesdays & Thursdays', 'RRULE:FREQ=WEEKLY;BYDAY=TU,TH'],
+
+  // Deduplicates
+  [
+    'Every Monday, Tuesday, Wednesday, and Monday',
+    'RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE',
+  ],
+  ['Every month in Jan & January', 'RRULE:FREQ=MONTHLY;BYMONTH=1'],
+]
+
 const toTexts = [
   ...texts,
   [
@@ -41,30 +80,18 @@ const toTexts = [
 ]
 
 describe('NLP', () => {
-  it('fromText()', function () {
-    texts.forEach(function (item) {
-      const text = item[0]
-      const str = item[1]
-      expect(RRule.fromText(text).toString()).toBe(str)
-    })
+  it.each(fromTexts)('fromText() %s', (text, str) => {
+    expect(RRule.fromText(text).toString()).toBe(str)
   })
 
-  it('toText()', function () {
-    toTexts.forEach(function (item) {
-      const text = item[0]
-      const str = item[1]
-      expect(RRule.fromString(str).toText().toLowerCase()).toBe(
-        text.toLowerCase()
-      )
-    })
+  it.each(toTexts)('toText() %s', (text, str) => {
+    expect(RRule.fromString(str).toText().toLowerCase()).toBe(
+      text.toLowerCase()
+    )
   })
 
-  it('parseText()', function () {
-    texts.forEach(function (item) {
-      const text = item[0]
-      const str = item[1]
-      expect(optionsToString(RRule.parseText(text))).toBe(str)
-    })
+  it.each(texts)('parseText() %s', (text, str) => {
+    expect(optionsToString(RRule.parseText(text))).toBe(str)
   })
 
   it('permits integers in byweekday (#153)', () => {
