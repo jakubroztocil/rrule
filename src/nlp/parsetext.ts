@@ -102,6 +102,14 @@ export default function parseText(text: string, language: Language = ENGLISH) {
   if (!ttr.start(text)) return null
 
   S()
+  // deduplicate arrays
+  if (options.byweekday && Array.isArray(options.byweekday)) {
+    options.byweekday = [...new Set(options.byweekday)]
+  }
+  if (options.bymonth && Array.isArray(options.bymonth)) {
+    options.bymonth = [...new Set(options.bymonth)]
+  }
+
   return options
 
   function S() {
@@ -114,7 +122,15 @@ export default function parseText(text: string, language: Language = ENGLISH) {
     switch (ttr.symbol) {
       case 'day(s)':
         options.freq = RRule.DAILY
-        if (ttr.nextSymbol()) {
+        ttr.nextSymbol()
+        if (!ttr.isDone()) {
+          if (ttr.accept('on')) {
+            const m = decodeM()
+            if (m) {
+              options.bymonth = [m]
+              ttr.nextSymbol()
+            }
+          }
           AT()
           F()
         }
@@ -186,7 +202,6 @@ export default function parseText(text: string, language: Language = ENGLISH) {
 
         if (!ttr.nextSymbol()) return
 
-        // TODO check for duplicates
         while (ttr.accept('comma')) {
           if (ttr.isDone()) throw new Error('Unexpected end')
 
@@ -222,7 +237,6 @@ export default function parseText(text: string, language: Language = ENGLISH) {
 
         if (!ttr.nextSymbol()) return
 
-        // TODO check for duplicates
         while (ttr.accept('comma')) {
           if (ttr.isDone()) throw new Error('Unexpected end')
 
@@ -242,7 +256,7 @@ export default function parseText(text: string, language: Language = ENGLISH) {
         break
 
       default:
-        throw new Error('Unknown symbol')
+        throw new Error(`Unknown symbol: ${ttr.symbol}`)
     }
   }
 
