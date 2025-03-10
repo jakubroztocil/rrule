@@ -87,11 +87,24 @@ export default class ToText {
         : this.origOptions.byweekday
       const days = String(byweekday)
 
+      const bysetpos = !isArray(this.origOptions.bysetpos)
+        ? this.origOptions.bysetpos === undefined
+          ? []
+          : [this.origOptions.bysetpos]
+        : this.origOptions.bysetpos
+
+      const combined =
+        bysetpos.length === 0
+          ? byweekday
+          : bysetpos.flatMap((n) =>
+              byweekday.map((weekday: Weekday) => weekday.nth(n))
+            )
+
       this.byweekday = {
-        allWeeks: byweekday.filter(function (weekday: Weekday) {
+        allWeeks: combined.filter(function (weekday: Weekday) {
           return !weekday.n
         }),
-        someWeeks: byweekday.filter(function (weekday: Weekday) {
+        someWeeks: combined.filter(function (weekday: Weekday) {
           return Boolean(weekday.n)
         }),
         isWeekdays:

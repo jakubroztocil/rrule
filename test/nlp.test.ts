@@ -2,6 +2,7 @@ import { RRule } from '../src'
 import { optionsToString } from '../src/optionstostring'
 import { DateFormatter } from '../src/nlp/totext'
 import { datetime } from './lib/utils'
+import { Weekday } from '../src/weekday'
 
 const texts = [
   ['Every day', 'RRULE:FREQ=DAILY'],
@@ -38,6 +39,16 @@ const toTexts = [
     'Every week on monday',
     'DTSTART;TZID=America/New_York:20220601T000000\nRRULE:INTERVAL=1;FREQ=WEEKLY;BYDAY=MO',
   ],
+  ['Every month on the 3rd Tuesday', 'RRULE:FREQ=MONTHLY;BYDAY=TU;BYSETPOS=+3'],
+  [
+    'Every month on the 3rd last Tuesday',
+    'RRULE:FREQ=MONTHLY;BYDAY=TU;BYSETPOS=-3',
+  ],
+  ['Every month on the last Monday', 'RRULE:FREQ=MONTHLY;BYDAY=MO;BYSETPOS=-1'],
+  [
+    'Every month on the 2nd last Friday',
+    'RRULE:FREQ=MONTHLY;BYDAY=FR;BYSETPOS=-2',
+  ],
 ]
 
 describe('NLP', () => {
@@ -70,7 +81,7 @@ describe('NLP', () => {
   it('permits integers in byweekday (#153)', () => {
     const rrule = new RRule({
       freq: RRule.WEEKLY,
-      byweekday: 0,
+      byweekday: new Weekday(0),
     })
 
     expect(rrule.toText()).toBe('every week on Monday')
