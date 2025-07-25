@@ -58,30 +58,33 @@ const rule = new RRule({
 
 // Get all occurrence dates (Date instances):
 rule.all()
-[ '2012-02-03T10:30:00.000Z',
-  '2012-03-05T10:30:00.000Z',
-  '2012-03-09T10:30:00.000Z',
-  '2012-04-09T10:30:00.000Z',
-  '2012-04-13T10:30:00.000Z',
-  '2012-05-14T10:30:00.000Z',
-  '2012-05-18T10:30:00.000Z',
-
- /* … */]
+// [
+//   '2012-02-03T10:30:00.000Z',
+//   '2012-03-05T10:30:00.000Z',
+//   '2012-03-09T10:30:00.000Z',
+//   '2012-04-09T10:30:00.000Z',
+//   '2012-04-13T10:30:00.000Z',
+//   '2012-05-14T10:30:00.000Z',
+//   '2012-05-18T10:30:00.000Z',
+//   /* … */
+// ]
 
 // Get a slice:
 rule.between(datetime(2012, 8, 1), datetime(2012, 9, 1))
-['2012-08-27T10:30:00.000Z',
- '2012-08-31T10:30:00.000Z']
+// [
+//   '2012-08-27T10:30:00.000Z',
+//   '2012-08-31T10:30:00.000Z'
+// ]
 
 // Get an iCalendar RRULE string representation:
 // The output can be used with RRule.fromString().
 rule.toString()
-"DTSTART:20120201T093000Z\nRRULE:FREQ=WEEKLY;INTERVAL=5;UNTIL=20130130T230000Z;BYDAY=MO,FR"
+// "DTSTART:20120201T093000Z\nRRULE:FREQ=WEEKLY;INTERVAL=5;UNTIL=20130130T230000Z;BYDAY=MO,FR"
 
 // Get a human-friendly text representation:
 // The output can be used with RRule.fromText().
 rule.toText()
-"every 5 weeks on Monday, Friday until January 31, 2013"
+// "every 5 weeks on Monday, Friday until January 31, 2013"
 ```
 
 **RRuleSet:**
@@ -117,30 +120,37 @@ rruleSet.exrule(
 rruleSet.exdate(datetime(2012, 5, 1, 10, 30))
 
 // Get all occurrence dates (Date instances):
-rruleSet.all()[
-  ('2012-02-01T10:30:00.000Z',
-  '2012-05-01T10:30:00.000Z',
-  '2012-07-01T10:30:00.000Z',
-  '2012-07-02T10:30:00.000Z')
-]
+rruleSet.all()
+// [
+//   (
+//     '2012-02-01T10:30:00.000Z',
+//     '2012-05-01T10:30:00.000Z',
+//     '2012-07-01T10:30:00.000Z',
+//     '2012-07-02T10:30:00.000Z'
+//   )
+// ]
 
 // Get a slice:
-rruleSet.between(datetime(2012, 2, 1), datetime(2012, 6, 2))[
-  ('2012-05-01T10:30:00.000Z', '2012-07-01T10:30:00.000Z')
-]
+rruleSet.between(datetime(2012, 2, 1), datetime(2012, 6, 2))
+// [
+//   ('2012-05-01T10:30:00.000Z', '2012-07-01T10:30:00.000Z')
+// ]
 
 // To string
-rruleSet.valueOf()[
-  ('DTSTART:20120201T023000Z',
-  'RRULE:FREQ=MONTHLY;COUNT=5',
-  'RDATE:20120701T023000Z,20120702T023000Z',
-  'EXRULE:FREQ=MONTHLY;COUNT=2',
-  'EXDATE:20120601T023000Z')
-]
+rruleSet.valueOf()
+// [
+//   ('DTSTART:20120201T023000Z',
+//   'RRULE:FREQ=MONTHLY;COUNT=5',
+//   'RDATE:20120701T023000Z,20120702T023000Z',
+//   'EXRULE:FREQ=MONTHLY;COUNT=2',
+//   'EXDATE:20120601T023000Z')
+// ]
 
 // To string
-rruleSet.toString()
-;('["DTSTART:20120201T023000Z","RRULE:FREQ=MONTHLY;COUNT=5","RDATE:20120701T023000Z,20120702T023000Z","EXRULE:FREQ=MONTHLY;COUNT=2","EXDATE:20120601T023000Z"]')
+rruleSet.toString();
+// (
+//   '["DTSTART:20120201T023000Z","RRULE:FREQ=MONTHLY;COUNT=5","RDATE:20120701T023000Z,20120702T023000Z","EXRULE:FREQ=MONTHLY;COUNT=2","EXDATE:20120601T023000Z"]'
+// )
 ```
 
 **rrulestr:**
@@ -180,10 +190,11 @@ const rule = RRule.fromString(
   + "RRULE:FREQ=WEEKLY;BYDAY=MO,WE,TH;INTERVAL=1;COUNT=3"
 )
 rule.all()
-
-[ 2018-11-01T18:00:00.000Z,
-  2018-11-05T18:00:00.000Z,
-  2018-11-07T18:00:00.000Z ]
+// [
+//   2018-11-01T18:00:00.000Z,
+//   2018-11-05T18:00:00.000Z,
+//   2018-11-07T18:00:00.000Z
+// ]
 // Even though the given offset is `Z` (UTC), these are local times, not UTC times.
 // Each of these this is the correct local Pacific time of each recurrence in
 // America/Los_Angeles when it is 19:00 in America/Denver, including the DST shift.
@@ -202,10 +213,11 @@ DateTime.fromJSDate(date)
   .setZone('local', { keepLocalTime: true })
   .toJSDate()
 )
-
-[ 2018-11-02T01:00:00.000Z,
-  2018-11-06T02:00:00.000Z,
-  2018-11-08T02:00:00.000Z ]
+// [
+//   2018-11-02T01:00:00.000Z,
+//   2018-11-06T02:00:00.000Z,
+//   2018-11-08T02:00:00.000Z
+// ]
 // These times are in true UTC; you can see the hours shift
 ```
 
@@ -229,10 +241,11 @@ new RRule({
   dtstart: datetime(2018, 2, 1, 10, 30),
   count: 1,
   tzid: 'Asia/Tokyo',
-}).all()[
-  // assuming the system timezone is set to America/Los_Angeles, you get:
-  '2018-01-31T17:30:00.000Z'
-]
+}).all()
+// assuming the system timezone is set to America/Los_Angeles, you get:
+// [
+//   '2018-01-31T17:30:00.000Z'
+// ]
 // which is the time in Los Angeles when it's 2018-02-01T10:30:00 in Tokyo.
 ```
 
@@ -245,14 +258,26 @@ new RRule({
   freq: RRule.MONTHLY,
   dtstart: new Date(2018, 1, 1, 10, 30),
   until: new Date(2018, 2, 31),
-}).all()[('2018-02-01T18:30:00.000Z', '2018-03-01T18:30:00.000Z')]
+}).all()
+// [
+//   (
+//     '2018-02-01T18:30:00.000Z',
+//     '2018-03-01T18:30:00.000Z'
+//   )
+// ]
 
 // RIGHT: Will produce dates with recurrences at the correct time
 new RRule({
   freq: RRule.MONTHLY,
   dtstart: datetime(2018, 2, 1, 10, 30),
   until: datetime(2018, 3, 31),
-}).all()[('2018-02-01T10:30:00.000Z', '2018-03-01T10:30:00.000Z')]
+}).all()
+// [
+//   (
+//     '2018-02-01T10:30:00.000Z',
+//     '2018-03-01T10:30:00.000Z'
+//   )
+// ]
 ```
 
 ### API
@@ -467,16 +492,25 @@ returns `true`. If a `false`-y value is returned, `date` isn't added to
 the result and the iteration is interrupted (possibly prematurely).
 
 ```javascript
-rule.all()[
-  ('2012-02-01T10:30:00.000Z',
-  '2012-05-01T10:30:00.000Z',
-  '2012-07-01T10:30:00.000Z',
-  '2012-07-02T10:30:00.000Z')
-]
+rule.all()
+// [
+//   (
+//     '2012-02-01T10:30:00.000Z',
+//     '2012-05-01T10:30:00.000Z',
+//     '2012-07-01T10:30:00.000Z',
+//     '2012-07-02T10:30:00.000Z'
+//   )
+// ]
 
 rule.all(function (date, i) {
   return i < 2
-})[('2012-02-01T10:30:00.000Z', '2012-05-01T10:30:00.000Z')]
+})
+// [
+//   (
+//     '2012-02-01T10:30:00.000Z',
+//     '2012-05-01T10:30:00.000Z'
+//   )
+// ]
 ```
 
 ##### `RRule.prototype.between(after, before, inc=false [, iterator])`
@@ -490,9 +524,13 @@ Optional `iterator` has the same function as it has with
 `RRule.prototype.all()`.
 
 ```javascript
-rule.between(datetime(2012, 8, 1), datetime(2012, 9, 1))[
-  ('2012-08-27T10:30:00.000Z', '2012-08-31T10:30:00.000Z')
-]
+rule.between(datetime(2012, 8, 1), datetime(2012, 9, 1))
+// [
+//   (
+//     '2012-08-27T10:30:00.000Z',
+//     '2012-08-31T10:30:00.000Z'
+//   )
+// ]
 ```
 
 ##### `RRule.prototype.before(dt, inc=false)`
@@ -521,8 +559,10 @@ Returns a string representation of the rule as per the iCalendar RFC.
 Only properties explicitly specified in `options` are included:
 
 ```javascript
-rule.toString()
-;('DTSTART:20120201T093000Z\nRRULE:FREQ=WEEKLY;INTERVAL=5;UNTIL=20130130T230000Z;BYDAY=MO,FR')
+rule.toString();
+// (
+//   'DTSTART:20120201T093000Z\nRRULE:FREQ=WEEKLY;INTERVAL=5;UNTIL=20130130T230000Z;BYDAY=MO,FR'
+// )
 
 rule.toString() == RRule.optionsToString(rule.origOptions)
 true
@@ -535,15 +575,19 @@ Converts `options` to iCalendar RFC `RRULE` string:
 ```javascript
 // Get full a string representation of all options,
 // including the default and inferred ones.
-RRule.optionsToString(rule.options)
-;('DTSTART:20120201T093000Z\nRRULE:FREQ=WEEKLY;INTERVAL=5;WKST=0;UNTIL=20130130T230000Z;BYDAY=MO,FR;BYHOUR=10;BYMINUTE=30;BYSECOND=0')
+RRule.optionsToString(rule.options);
+// (
+//   'DTSTART:20120201T093000Z\nRRULE:FREQ=WEEKLY;INTERVAL=5;WKST=0;UNTIL=20130130T230000Z;BYDAY=MO,FR;BYHOUR=10;BYMINUTE=30;BYSECOND=0'
+// )
 
 // Cherry-pick only some options from an rrule:
 RRule.optionsToString({
   freq: rule.options.freq,
   dtstart: rule.options.dtstart,
-})
-;('DTSTART:20120201T093000Z\nRRULE:FREQ=WEEKLY;')
+});
+// (
+//   'DTSTART:20120201T093000Z\nRRULE:FREQ=WEEKLY;'
+// )
 ```
 
 ##### `RRule.fromString(rfcString)`
@@ -589,8 +633,10 @@ var rule = new RRule({
   freq: RRule.WEEKLY,
   count: 23,
 })
-rule.toText()
-;('every week for 23 times')
+rule.toText();
+// (
+//   'every week for 23 times'
+// )
 ```
 
 ##### `RRule.prototype.isFullyConvertibleToText()`
