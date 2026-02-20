@@ -1,5 +1,5 @@
 {
-  "name": "rrule",
+  "name": "@shavonn/rrule",
   "version": "2.8.0",
   "description": "JavaScript library for working with recurrence rules for calendar dates.",
   "homepage": "http://shavonn.github.io/rrule/",

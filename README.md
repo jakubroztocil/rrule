@@ -2,9 +2,12 @@
 
 **Library for working with recurrence rules for calendar dates.**
 
-[![NPM version][npm-image]][npm-url]
-[![Build Status][ci-image]][ci-url]
-[![Downloads][downloads-image]][downloads-url]
+<p style="text-align:center;">
+    <img src="https://img.shields.io/npm/v/@shavonn/rrule" alt="npm version">
+    <img alt="GitHub Actions Release Workflow Status" src="https://img.shields.io/github/actions/workflow/status/shavonn/rrule/release.yml?label=Build">
+    <img alt="GitHub Actions Test Workflow Status" src="https://img.shields.io/github/actions/workflow/status/shavonn/rrule/test.yml?label=Test">
+    <img src="https://img.shields.io/npm/l/@shavonn/rrule" alt="license">
+</p>
 
 rrule.js supports recurrence rules as defined in the [iCalendar RFC](https://tools.ietf.org/html/rfc5545), with a few 
 important [differences](#differences-from-icalendar-rfc). It is a partial port of the `rrule` module from the excellent
@@ -12,6 +15,10 @@ important [differences](#differences-from-icalendar-rfc). It is a partial port o
 recurrence rules from and to natural language.
 
 ---
+
+### Requirements
+
+Node 20.19+
 
 ### Quick Start
 
@@ -800,11 +807,4 @@ $ bun run build
 
 Python `dateutil` is written by [Gustavo Niemeyer](http://niemeyer.net).
 
-See [LICENSE](https://github.com/jkbrzt/rrule/blob/master/LICENSE) for more details.
-
-[npm-url]: https://npmjs.org/package/rrule
-[npm-image]: http://img.shields.io/npm/v/rrule.svg
-[ci-url]: https://github.com/jkbrzt/rrule/actions
-[ci-image]: https://github.com/jkbrzt/rrule/workflows/Node%20CI/badge.svg
-[downloads-url]: https://npmjs.org/package/rrule
-[downloads-image]: http://img.shields.io/npm/dm/rrule.svg?style=flat-square
+See [LICENSE](https://github.com/shavonn/rrule/blob/main/LICENSE) for more details.
