@@ -27,7 +27,7 @@ describe('RRule', () => {
     TEST_CTX.ALSO_TESTSUBSECOND_PRECISION = true;
   });
 
-  it('rrulestr https://github.com/jkbrzt/rrule/pull/164', () => {
+  it('rrulestr - correctly handles WKST condition statement', () => {
     const s1 = 'RRULE:FREQ=WEEKLY;WKST=WE';
     const s2 = rrulestr(s1).toString();
     expect(s1).toBe(s2);
