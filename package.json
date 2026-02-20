@@ -1,7 +1,17 @@
 {
   "name": "rrule",
-  "private": true,
   "version": "2.8.0",
+  "description": "JavaScript library for working with recurrence rules for calendar dates.",
+  "homepage": "http://shavonn.github.io/rrule/",
+  "license": "BSD-3-Clause",
+  "keywords": [
+    "dates",
+    "recurrences",
+    "calendar",
+    "icalendar",
+    "rfc"
+  ],
+  "author": "Shavonn Brown, Jakub Roztocil, Lars Schöning, and David Golightly",
   "type": "module",
   "main": "./dist/rrule.cjs",
   "module": "./dist/rrule.js",
@@ -21,6 +31,10 @@
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/shavonn/rrule.git"
+  },
   "scripts": {
     "dev": "vite",
     "lint": "biome check .",
