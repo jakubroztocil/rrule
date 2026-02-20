@@ -34,7 +34,7 @@ const texts = [
 const toTexts = [
   ...texts,
   [
-    'Every week on monday',
+    'Every week on monday, starting June 1, 2022',
     'DTSTART;TZID=America/New_York:20220601T000000\nRRULE:INTERVAL=1;FREQ=WEEKLY;BYDAY=MO',
   ],
 ];

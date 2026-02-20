@@ -188,6 +188,19 @@ export default class ToText {
         );
     }
 
+    if (this.origOptions.dtstart) {
+      this.text.push(',');
+      this.add(gettext('starting'));
+      const dtstart = this.origOptions.dtstart;
+      this.add(
+        this.dateFormatter(
+          dtstart.getUTCFullYear(),
+          this.language.monthNames[dtstart.getUTCMonth()]!,
+          dtstart.getUTCDate(),
+        ),
+      );
+    }
+
     if (!this.isFullyConvertible()) this.add(gettext('(~ approximate)'));
 
     return this.text.join('');
