@@ -1,0 +1,47 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x, 18.x, 20.x, 22.x, 24.x]
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v6
+
+      - name: Setup
+        uses: ./.github/actions/setup
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Build
+        run: bun run build
+
+      - name: Run Unit Tests - Canada
+        run: LANG=en_CA TZ=America/Vancouver bun test
+
+      - name: Run Unit Tests - US
+        run: LANG=en_US TZ=America/Los_Angeles bun test
+
+      - name: Run Unit Tests - Kenya
+        run: LANG=sw_KE TZ=Africa/Nairobi bun test
+
+      - name: Run Unit Tests - Christmas
+        run: LANG=en_KI TZ=Pacific/Kiritimati bun test
+
+      - name: Run Unit Tests - Japan
+        run: LANG=jp_JP TZ=Asia/Tokyo bun test

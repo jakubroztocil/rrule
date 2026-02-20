@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v6
+
+      - name: Setup
+        uses: ./.github/actions/setup
+
+      - name: Capture New Release Version
+        run: |
+          bun changeset status --output=release.json
+          echo "NEW_VERSION=$(jq -r '.releases | map(.name+"@"+.newVersion) | join(",")' release.json)" >> "$GITHUB_ENV"
+          rm release.json
+
+      - name: Create Release Pull Request or Publish to GitHub Packages
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          publish: bun publish-package
+          title: "Release version ${{env.NEW_VERSION}}"
+          commit: "Update version ${{env.NEW_VERSION}}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}

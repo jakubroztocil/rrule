@@ -1,0 +1,23 @@
+name: Setup
+description: Setup bun, Node and install packages
+inputs:
+  node-version: # node version to use
+    description: 'NODE_VERSION'
+    default: '22.x'
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Bun
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: latest
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Install Dependencies
+      shell: bash
+      run: bun i
