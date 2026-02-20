@@ -4,6 +4,9 @@ import IterResult, { type IterArgs } from './iterresult';
 
 export type CacheKeys = 'before' | 'after' | 'between';
 
+/** Max cached entries per query method (before/after/between) */
+const MAX_CACHE_SIZE = 64;
+
 function argsMatch(
   left: IterArgs[keyof IterArgs] | undefined,
   right: IterArgs[keyof IterArgs] | undefined,
@@ -22,7 +25,7 @@ function argsMatch(
 }
 
 export class Cache {
-  all: Date[] | Partial<IterArgs> | false = false;
+  all: Date[] | false = false;
   before: IterArgs[] = [];
   after: IterArgs[] = [];
   between: IterArgs[] = [];
@@ -45,6 +48,10 @@ export class Cache {
       this.all = value as Date[];
     } else {
       args!._value = value;
+      // Evict oldest entry if cache is full
+      if (this[what].length >= MAX_CACHE_SIZE) {
+        this[what].shift();
+      }
       this[what].push(args as IterArgs);
     }
   }
@@ -72,26 +79,24 @@ export class Cache {
       return false;
     };
 
-    const cachedObject = this[what];
     if (what === 'all') {
       cached = this.all as Date[];
-    } else if (isArray(cachedObject)) {
+    } else {
       // Let's see whether we've already called the
       // 'what' method with the same 'args'
-      for (let i = 0; i < cachedObject.length; i++) {
-        const item = cachedObject[i] as IterArgs;
+      for (const item of this[what]) {
         if (argsKeys.length && findCacheDiff(item)) continue;
         cached = item._value;
         break;
       }
     }
 
-    if (!cached && this.all) {
+    if (cached === false && this.all) {
       // Not in the cache, but we already know all the occurrences,
       // so we can find the correct dates from the cached ones.
       const iterResult = new IterResult(what, args!);
-      for (let i = 0; i < (this.all as Date[]).length; i++) {
-        if (!iterResult.accept((this.all as Date[])[i]!)) break;
+      for (const date of this.all) {
+        if (!iterResult.accept(date)) break;
       }
       cached = iterResult.getValue() as Date;
       this._cacheAdd(what, cached, args);

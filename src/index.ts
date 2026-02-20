@@ -16,6 +16,7 @@
 
 export { datetime } from './dateutil';
 export { RRule } from './rrule';
+export { RRuleBase } from './rrulebase';
 export { RRuleSet } from './rruleset';
 export { type RRuleStrOptions, rrulestr } from './rrulestr';
 export { type ByWeekday, Frequency, type Options } from './types';

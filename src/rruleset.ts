@@ -3,10 +3,10 @@ import type IterResult from './iterresult';
 import { iterSet } from './iterset';
 import { optionsToString } from './optionstostring';
 import { RRule } from './rrule';
-import { rrulestr } from './rrulestr';
+import { RRuleBase } from './rrulebase';
 import type { IterResultType, QueryMethodTypes } from './types';
 
-export class RRuleSet extends RRule {
+export class RRuleSet extends RRuleBase {
   public readonly _rrule: RRule[];
   public readonly _rdate: Date[];
   public readonly _exrule: RRule[];
@@ -18,11 +18,11 @@ export class RRuleSet extends RRule {
   /**
    *
    * @param {Boolean?} noCache
-   * The same stratagy as RRule on cache, default to false
+   * The same strategy as RRule on cache, default to false
    * @constructor
    */
   constructor(noCache = false) {
-    super({}, noCache);
+    super(noCache);
 
     this._rrule = [];
     this._rdate = [];
@@ -110,8 +110,8 @@ export class RRuleSet extends RRule {
    *
    * @return List of rrules
    */
-  rrules() {
-    return this._rrule.map((e) => rrulestr(e.toString()));
+  rrules(): RRule[] {
+    return this._rrule.map((e) => e.clone());
   }
 
   /**
@@ -119,8 +119,8 @@ export class RRuleSet extends RRule {
    *
    * @return List of exrules
    */
-  exrules() {
-    return this._exrule.map((e) => rrulestr(e.toString()));
+  exrules(): RRule[] {
+    return this._exrule.map((e) => e.clone());
   }
 
   /**
@@ -203,7 +203,8 @@ function _addRule(rrule: RRule, collection: RRule[]) {
     throw new TypeError(`${String(rrule)} is not RRule instance`);
   }
 
-  if (!collection.map(String).includes(String(rrule))) {
+  const str = String(rrule);
+  if (!collection.some((r) => String(r) === str)) {
     collection.push(rrule);
   }
 }
@@ -212,7 +213,8 @@ function _addDate(date: Date, collection: Date[]) {
   if (!(date instanceof Date)) {
     throw new TypeError(`${String(date)} is not Date instance`);
   }
-  if (!collection.map(Number).includes(Number(date))) {
+  const time = date.getTime();
+  if (!collection.some((d) => d.getTime() === time)) {
     collection.push(date);
     sort(collection);
   }

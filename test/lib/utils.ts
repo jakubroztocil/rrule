@@ -1,6 +1,6 @@
 export { datetime } from '../../src/dateutil';
 
-import { RRule, RRuleSet } from '../../src';
+import { RRule, RRuleBase } from '../../src';
 import { dateInTimeZone, datetime } from '../../src/dateutil';
 
 export const TEST_CTX = {
@@ -60,7 +60,7 @@ export const testRecurring = ((
   expectedDates: Date | Date[],
   itFunc: jest.Func = it,
 ) => {
-  let rule: RRule;
+  let rule: RRuleBase;
   let method: 'all' | 'before' | 'between' | 'after';
   let args: unknown[];
 
@@ -68,7 +68,7 @@ export const testRecurring = ((
     testObj = testObj();
   }
 
-  if (testObj instanceof RRule || testObj instanceof RRuleSet) {
+  if (testObj instanceof RRuleBase) {
     rule = testObj;
     method = 'all';
     args = [];
