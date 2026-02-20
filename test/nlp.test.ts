@@ -1,7 +1,6 @@
-import { RRule } from '../src'
-import { optionsToString } from '../src/optionstostring'
-import { DateFormatter } from '../src/nlp/totext'
-import { datetime } from './lib/utils'
+import { datetime, RRule } from '../src';
+import type { DateFormatter } from '../src/nlp/totext';
+import { optionsToString } from '../src/optionstostring';
 
 const texts = [
   ['Every day', 'RRULE:FREQ=DAILY'],
@@ -30,7 +29,7 @@ const texts = [
   ['Every month on the 2nd last Friday', 'RRULE:FREQ=MONTHLY;BYDAY=-2FR'],
   // ['Every week until January 1, 2007', 'RRULE:FREQ=WEEKLY;UNTIL=20070101T080000Z'],
   ['Every week for 20 times', 'RRULE:FREQ=WEEKLY;COUNT=20'],
-]
+];
 
 const toTexts = [
   ...texts,
@@ -38,50 +37,50 @@ const toTexts = [
     'Every week on monday',
     'DTSTART;TZID=America/New_York:20220601T000000\nRRULE:INTERVAL=1;FREQ=WEEKLY;BYDAY=MO',
   ],
-]
+];
 
 describe('NLP', () => {
-  it('fromText()', function () {
-    texts.forEach(function (item) {
-      const text = item[0]
-      const str = item[1]
-      expect(RRule.fromText(text).toString()).toBe(str)
-    })
-  })
+  it('fromText()', () => {
+    texts.forEach((item) => {
+      const text = item[0];
+      const str = item[1];
+      expect(RRule.fromText(text).toString()).toBe(str);
+    });
+  });
 
-  it('toText()', function () {
-    toTexts.forEach(function (item) {
-      const text = item[0]
-      const str = item[1]
+  it('toText()', () => {
+    toTexts.forEach((item) => {
+      const text = item[0];
+      const str = item[1];
       expect(RRule.fromString(str).toText().toLowerCase()).toBe(
-        text.toLowerCase()
-      )
-    })
-  })
+        text.toLowerCase(),
+      );
+    });
+  });
 
-  it('parseText()', function () {
-    texts.forEach(function (item) {
-      const text = item[0]
-      const str = item[1]
-      expect(optionsToString(RRule.parseText(text))).toBe(str)
-    })
-  })
+  it('parseText()', () => {
+    texts.forEach((item) => {
+      const text = item[0];
+      const str = item[1];
+      expect(optionsToString(RRule.parseText(text))).toBe(str);
+    });
+  });
 
   it('permits integers in byweekday (#153)', () => {
     const rrule = new RRule({
       freq: RRule.WEEKLY,
       byweekday: 0,
-    })
+    });
 
-    expect(rrule.toText()).toBe('every week on Monday')
-    expect(rrule.toString()).toBe('RRULE:FREQ=WEEKLY;BYDAY=MO')
-  })
+    expect(rrule.toText()).toBe('every week on Monday');
+    expect(rrule.toString()).toBe('RRULE:FREQ=WEEKLY;BYDAY=MO');
+  });
 
   it('sorts monthdays correctly (#101)', () => {
-    const options = { freq: 2, bymonthday: [3, 10, 17, 24] }
-    const rule = new RRule(options)
-    expect(rule.toText()).toBe('every week on the 3rd, 10th, 17th and 24th')
-  })
+    const options = { freq: 2, bymonthday: [3, 10, 17, 24] };
+    const rule = new RRule(options);
+    expect(rule.toText()).toBe('every week on the 3rd, 10th, 17th and 24th');
+  });
 
   it('shows correct text for every day', () => {
     const options = {
@@ -95,43 +94,43 @@ describe('NLP', () => {
         RRule.SA,
         RRule.SU,
       ],
-    }
-    const rule = new RRule(options)
-    expect(rule.toText()).toBe('every day')
-  })
+    };
+    const rule = new RRule(options);
+    expect(rule.toText()).toBe('every day');
+  });
 
   it('shows correct text for every minute', () => {
-    const options = { freq: RRule.MINUTELY }
-    const rule = new RRule(options)
-    expect(rule.toText()).toBe('every minute')
-  })
+    const options = { freq: RRule.MINUTELY };
+    const rule = new RRule(options);
+    expect(rule.toText()).toBe('every minute');
+  });
 
   it('shows correct text for every (plural) minutes', () => {
-    const options = { freq: RRule.MINUTELY, interval: 2 }
-    const rule = new RRule(options)
-    expect(rule.toText()).toBe('every 2 minutes')
-  })
+    const options = { freq: RRule.MINUTELY, interval: 2 };
+    const rule = new RRule(options);
+    expect(rule.toText()).toBe('every 2 minutes');
+  });
 
   it("by default formats 'until' correctly", () => {
     const rrule = new RRule({
       freq: RRule.WEEKLY,
       until: datetime(2012, 11, 10),
-    })
+    });
 
-    expect(rrule.toText()).toBe('every week until November 10, 2012')
-  })
+    expect(rrule.toText()).toBe('every week until November 10, 2012');
+  });
 
   it("formats 'until' as desired if asked", () => {
     const rrule = new RRule({
       freq: RRule.WEEKLY,
       until: datetime(2012, 11, 10),
-    })
+    });
 
     const dateFormatter: DateFormatter = (year, month, day) =>
-      `${day}. ${month}, ${year}`
+      `${day}. ${month}, ${year}`;
 
     expect(rrule.toText(undefined, undefined, dateFormatter)).toBe(
-      'every week until 10. November, 2012'
-    )
-  })
-})
+      'every week until 10. November, 2012',
+    );
+  });
+});

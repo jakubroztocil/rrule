@@ -3,11 +3,11 @@
 // =============================================================================
 
 export interface Language {
-  dayNames: string[]
-  monthNames: string[]
+  dayNames: string[];
+  monthNames: string[];
   tokens: {
-    [k: string]: RegExp
-  }
+    [k: string]: RegExp;
+  };
 }
 
 const ENGLISH: Language = {
@@ -78,6 +78,6 @@ const ENGLISH: Language = {
     december: /^dec(ember)?/i,
     comma: /^(,\s*|(and|or)\s*)+/i,
   },
-}
+};
 
-export default ENGLISH
+export default ENGLISH;

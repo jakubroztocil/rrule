@@ -1,10 +1,10 @@
-import { Options } from '../src/types'
-import { RRule } from '../src/rrule'
-import { optionsToString } from '../src/optionstostring'
-import { datetime } from './lib/utils'
+import { optionsToString } from '../src/optionstostring';
+import { RRule } from '../src/rrule';
+import type { Options } from '../src/types';
+import { datetime } from './lib/utils';
 
 describe('optionsToString', () => {
-  it('serializes valid single lines of rrules', function () {
+  it('serializes valid single lines of rrules', () => {
     const expectations: [Partial<Options>, string][] = [
       [
         { freq: RRule.WEEKLY, until: datetime(2010, 1, 1, 0, 0, 0) },
@@ -32,13 +32,13 @@ describe('optionsToString', () => {
         },
         'DTSTART;TZID=America/New_York:19970902T090000\n' + 'RRULE:FREQ=WEEKLY',
       ],
-    ]
+    ];
 
-    expectations.forEach(function (item) {
-      const s = item[0]
-      const s2 = item[1]
+    expectations.forEach((item) => {
+      const s = item[0];
+      const s2 = item[1];
       // JSON.stringify(s)
-      expect(optionsToString(s)).toEqual(s2)
-    })
-  })
-})
+      expect(optionsToString(s)).toEqual(s2);
+    });
+  });
+});

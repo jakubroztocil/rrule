@@ -27,7 +27,7 @@ to natural language.
 #### Client Side
 
 ```bash
-$ yarn add rrule
+$ bun i rrule
 ```
 
 #### Server Side
@@ -35,7 +35,7 @@ $ yarn add rrule
 Includes optional TypeScript types
 
 ```bash
-$ yarn add rrule
+$ bun i rrule
 # or
 $ npm install rrule
 ```
@@ -793,23 +793,24 @@ rrule.js is implemented in Typescript. It uses [JavaScript Standard Style](https
 To run the code, checkout this repository and run:
 
 ```
-$ yarn
+$ bun i
 ```
 
 To run the tests, run:
 
 ```
-$ yarn test
+$ bun run test
 ```
 
 To build files for distribution, run:
 
 ```
-$ yarn build
+$ bun run build
 ```
 
 #### Authors
 
+- [Shavonn Brown](http://www.shavonn.com)
 - [Jakub Roztocil](http://roztocil.co)
   ([@jkbrzt](http://twitter.com/jkbrzt))
 - Lars Schöning ([@lyschoening](http://twitter.com/lyschoening))

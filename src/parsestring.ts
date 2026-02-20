@@ -1,72 +1,73 @@
-import { Options, Frequency } from './types'
-import { Weekday } from './weekday'
-import { untilStringToDate } from './dateutil'
-import { Days } from './rrule'
+import { untilStringToDate } from './dateutil';
+import { Days } from './rrule';
+import { Frequency, type Options } from './types';
+import { Weekday } from './weekday';
 
 export function parseString(rfcString: string): Partial<Options> {
   const options = rfcString
     .split('\n')
     .map(parseLine)
-    .filter((x) => x !== null)
-  return { ...options[0], ...options[1] }
+    .filter((x) => x !== null);
+  return { ...options[0], ...options[1] };
 }
 
 export function parseDtstart(line: string) {
-  const options: Partial<Options> = {}
+  const options: Partial<Options> = {};
 
   const dtstartWithZone = /DTSTART(?:;TZID=([^:=]+?))?(?::|=)([^;\s]+)/i.exec(
-    line
-  )
+    line,
+  );
 
   if (!dtstartWithZone) {
-    return options
+    return options;
   }
 
-  const [, tzid, dtstart] = dtstartWithZone
+  const [, tzid, dtstart] = dtstartWithZone;
 
   if (tzid) {
-    options.tzid = tzid
+    options.tzid = tzid;
   }
-  options.dtstart = untilStringToDate(dtstart)
-  return options
+  options.dtstart = untilStringToDate(dtstart!);
+  return options;
 }
 
 function parseLine(rfcString: string) {
-  rfcString = rfcString.replace(/^\s+|\s+$/, '')
-  if (!rfcString.length) return null
+  rfcString = rfcString.replace(/^\s+|\s+$/, '');
+  if (!rfcString.length) return null;
 
-  const header = /^([A-Z]+?)[:;]/.exec(rfcString.toUpperCase())
+  const header = /^([A-Z]+?)[:;]/.exec(rfcString.toUpperCase());
   if (!header) {
-    return parseRrule(rfcString)
+    return parseRrule(rfcString);
   }
 
-  const [, key] = header
-  switch (key.toUpperCase()) {
+  const [, key] = header;
+  switch (key!.toUpperCase()) {
     case 'RRULE':
     case 'EXRULE':
-      return parseRrule(rfcString)
+      return parseRrule(rfcString);
     case 'DTSTART':
-      return parseDtstart(rfcString)
+      return parseDtstart(rfcString);
     default:
-      throw new Error(`Unsupported RFC prop ${key} in ${rfcString}`)
+      throw new Error(`Unsupported RFC prop ${key} in ${rfcString}`);
   }
 }
 
 function parseRrule(line: string) {
-  const strippedLine = line.replace(/^RRULE:/i, '')
-  const options = parseDtstart(strippedLine)
+  const strippedLine = line.replace(/^RRULE:/i, '');
+  const options = parseDtstart(strippedLine);
 
-  const attrs = line.replace(/^(?:RRULE|EXRULE):/i, '').split(';')
+  const attrs = line.replace(/^(?:RRULE|EXRULE):/i, '').split(';');
 
   attrs.forEach((attr) => {
-    const [key, value] = attr.split('=')
-    switch (key.toUpperCase()) {
+    const [key, value] = attr.split('=');
+    switch (key!.toUpperCase()) {
       case 'FREQ':
-        options.freq = Frequency[value.toUpperCase() as keyof typeof Frequency]
-        break
+        options.freq =
+          Frequency[value!.toUpperCase() as keyof typeof Frequency];
+        break;
       case 'WKST':
-        options.wkst = Days[value.toUpperCase() as keyof typeof Days]
-        break
+        options.wkst = Days[value!.toUpperCase() as keyof typeof Days];
+        break;
       case 'COUNT':
       case 'INTERVAL':
       case 'BYSETPOS':
@@ -76,72 +77,74 @@ function parseRrule(line: string) {
       case 'BYWEEKNO':
       case 'BYHOUR':
       case 'BYMINUTE':
-      case 'BYSECOND':
-        const num = parseNumber(value)
-        const optionKey = key.toLowerCase()
+      case 'BYSECOND': {
+        const num = parseNumber(value!);
+        const optionKey = key!.toLowerCase();
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        options[optionKey] = num
-        break
+        // @ts-expect-error
+        options[optionKey] = num;
+        break;
+      }
       case 'BYWEEKDAY':
       case 'BYDAY':
-        options.byweekday = parseWeekday(value)
-        break
+        options.byweekday = parseWeekday(value!);
+        break;
       case 'DTSTART':
-      case 'TZID':
+      case 'TZID': {
         // for backwards compatibility
-        const dtstart = parseDtstart(line)
-        options.tzid = dtstart.tzid
-        options.dtstart = dtstart.dtstart
-        break
+        const dtstart = parseDtstart(line);
+        options.tzid = dtstart.tzid;
+        options.dtstart = dtstart.dtstart;
+        break;
+      }
       case 'UNTIL':
-        options.until = untilStringToDate(value)
-        break
+        options.until = untilStringToDate(value!);
+        break;
       case 'BYEASTER':
-        options.byeaster = Number(value)
-        break
+        options.byeaster = Number(value!);
+        break;
       default:
-        throw new Error("Unknown RRULE property '" + key + "'")
+        throw new Error(`Unknown RRULE property '${key!}'`);
     }
-  })
+  });
 
-  return options
+  return options;
 }
 
 function parseNumber(value: string) {
   if (value.indexOf(',') !== -1) {
-    const values = value.split(',')
-    return values.map(parseIndividualNumber)
+    const values = value.split(',');
+    return values.map(parseIndividualNumber);
   }
 
-  return parseIndividualNumber(value)
+  return parseIndividualNumber(value);
 }
 
 function parseIndividualNumber(value: string) {
   if (/^[+-]?\d+$/.test(value)) {
-    return Number(value)
+    return Number(value);
   }
 
-  return value
+  return value;
 }
 
 function parseWeekday(value: string) {
-  const days = value.split(',')
+  const days = value.split(',');
 
   return days.map((day) => {
     if (day.length === 2) {
       // MO, TU, ...
-      return Days[day as keyof typeof Days] // wday instanceof Weekday
+      return Days[day as keyof typeof Days]; // wday instanceof Weekday
     }
 
     // -1MO, +3FR, 1SO, 13TU ...
-    const parts = day.match(/^([+-]?\d{1,2})([A-Z]{2})$/)
+    const parts = day.match(/^([+-]?\d{1,2})([A-Z]{2})$/);
     if (!parts || parts.length < 3) {
-      throw new SyntaxError(`Invalid weekday string: ${day}`)
+      throw new SyntaxError(`Invalid weekday string: ${day}`);
     }
-    const n = Number(parts[1])
-    const wdaypart = parts[2] as keyof typeof Days
-    const wday = Days[wdaypart].weekday
-    return new Weekday(wday, n)
-  })
+    const n = Number(parts[1]);
+    const wdaypart = parts[2] as keyof typeof Days;
+    const wday = Days[wdaypart].weekday;
+    return new Weekday(wday, n);
+  });
 }

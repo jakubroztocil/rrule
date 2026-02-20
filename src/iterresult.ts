@@ -1,41 +1,43 @@
-import { QueryMethodTypes, IterResultType } from './types'
+import type { IterResultType, QueryMethodTypes } from './types';
 
 // =============================================================================
 // Results
 // =============================================================================
 
 export interface IterArgs {
-  inc: boolean
-  before: Date
-  after: Date
-  dt: Date
-  _value: Date | Date[] | null
+  inc: boolean;
+  before: Date;
+  after: Date;
+  dt: Date;
+  _value: Date | Date[] | null;
 }
 
 /**
  * This class helps us to emulate python's generators, sorta.
  */
 export default class IterResult<M extends QueryMethodTypes> {
-  public readonly method: M
-  public readonly args: Partial<IterArgs>
-  public readonly minDate: Date | null = null
-  public readonly maxDate: Date | null = null
-  public _result: Date[] = []
-  public total = 0
+  public readonly method: M;
+  public readonly args: Partial<IterArgs>;
+  public readonly minDate: Date | null = null;
+  public readonly maxDate: Date | null = null;
+  public _result: Date[] = [];
+  public total = 0;
 
   constructor(method: M, args: Partial<IterArgs>) {
-    this.method = method
-    this.args = args
+    this.method = method;
+    this.args = args;
 
     if (method === 'between') {
-      this.maxDate = args.inc
-        ? args.before
-        : new Date(args.before.getTime() - 1)
-      this.minDate = args.inc ? args.after : new Date(args.after.getTime() + 1)
+      this.maxDate = args.inc!
+        ? args.before!
+        : new Date(args.before!.getTime() - 1);
+      this.minDate = args.inc!
+        ? args.after!
+        : new Date(args.after!.getTime() + 1);
     } else if (method === 'before') {
-      this.maxDate = args.inc ? args.dt : new Date(args.dt.getTime() - 1)
+      this.maxDate = args.inc! ? args.dt! : new Date(args.dt!.getTime() - 1);
     } else if (method === 'after') {
-      this.minDate = args.inc ? args.dt : new Date(args.dt.getTime() + 1)
+      this.minDate = args.inc! ? args.dt! : new Date(args.dt!.getTime() + 1);
     }
   }
 
@@ -48,22 +50,22 @@ export default class IterResult<M extends QueryMethodTypes> {
    * false if we're done.
    */
   accept(date: Date) {
-    ++this.total
-    const tooEarly = this.minDate && date < this.minDate
-    const tooLate = this.maxDate && date > this.maxDate
+    ++this.total;
+    const tooEarly = this.minDate && date < this.minDate;
+    const tooLate = this.maxDate && date > this.maxDate;
 
     if (this.method === 'between') {
-      if (tooEarly) return true
-      if (tooLate) return false
+      if (tooEarly) return true;
+      if (tooLate) return false;
     } else if (this.method === 'before') {
-      if (tooLate) return false
+      if (tooLate) return false;
     } else if (this.method === 'after') {
-      if (tooEarly) return true
-      this.add(date)
-      return false
+      if (tooEarly) return true;
+      this.add(date);
+      return false;
     }
 
-    return this.add(date)
+    return this.add(date);
   }
 
   /**
@@ -72,8 +74,8 @@ export default class IterResult<M extends QueryMethodTypes> {
    * @return {Boolean} whether we are interested in more values.
    */
   add(date: Date) {
-    this._result.push(date)
-    return true
+    this._result.push(date);
+    return true;
   }
 
   /**
@@ -83,19 +85,17 @@ export default class IterResult<M extends QueryMethodTypes> {
    * @return {Date,Array?}
    */
   getValue(): IterResultType<M> {
-    const res = this._result
+    const res = this._result;
     switch (this.method) {
       case 'all':
       case 'between':
-        return res as IterResultType<M>
-      case 'before':
-      case 'after':
+        return res as IterResultType<M>;
       default:
-        return (res.length ? res[res.length - 1] : null) as IterResultType<M>
+        return (res.length ? res[res.length - 1] : null) as IterResultType<M>;
     }
   }
 
   clone() {
-    return new IterResult(this.method, this.args)
+    return new IterResult(this.method, this.args);
   }
 }

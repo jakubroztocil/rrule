@@ -1,5 +1,0 @@
-dist/
-coverage/
-webpack.config.js
-.eslintrc.js
-jest.config.js

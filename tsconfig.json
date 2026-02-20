@@ -1,15 +1,28 @@
 {
   "compilerOptions": {
-    "noEmit": true,
-    "noImplicitAny": true,
-    "sourceMap": true,
-    "module": "commonjs",
-    "noEmitOnError": true,
+    "target": "ES2022",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
     "esModuleInterop": true,
-    "target": "es6",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
     "baseUrl": ".",
-    "rootDirs": ["./src/", "./test/"]
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./dist"
   },
-  "include": ["./src/**/*", "./test/**/*"],
-  "exclude": ["node_modules"]
+  "include": ["src", "vite.config.ts"]
 }

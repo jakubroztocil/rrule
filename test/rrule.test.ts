@@ -1,66 +1,66 @@
+import { reset as resetMockDate, set as setMockDate } from 'mockdate';
+import { Frequency, RRule, rrulestr } from '../src/index';
 import {
-  parse,
   datetime,
-  testRecurring,
   expectedDate,
+  parse,
   TEST_CTX,
-} from './lib/utils'
-import { RRule, rrulestr, Frequency } from '../src/index'
-import { set as setMockDate, reset as resetMockDate } from 'mockdate'
+  testRecurring,
+} from './lib/utils';
 
-describe('RRule', function () {
+describe('RRule', () => {
   beforeAll(() => {
     // Enable additional toString() / fromString() tests
     // for each testRecurring().
-    TEST_CTX.ALSO_TESTSTRING_FUNCTIONS = true
+    TEST_CTX.ALSO_TESTSTRING_FUNCTIONS = true;
 
     // Enable additional toText() / fromText() tests
     // for each testRecurring().
     // Many of the tests fail because the conversion is only approximate,
     // but it gives an idea about how well or bad it converts.
-    TEST_CTX.ALSO_TESTNLP_FUNCTIONS = false
+    TEST_CTX.ALSO_TESTNLP_FUNCTIONS = false;
 
     // Thorough after()/before()/between() tests.
     // NOTE: can take a longer time.
-    TEST_CTX.ALSO_TESTBEFORE_AFTER_BETWEEN = true
+    TEST_CTX.ALSO_TESTBEFORE_AFTER_BETWEEN = true;
 
-    TEST_CTX.ALSO_TESTSUBSECOND_PRECISION = true
-  })
+    TEST_CTX.ALSO_TESTSUBSECOND_PRECISION = true;
+  });
 
-  it('rrulestr https://github.com/jkbrzt/rrule/pull/164', function () {
-    const s1 = 'RRULE:FREQ=WEEKLY;WKST=WE'
-    const s2 = rrulestr(s1).toString()
-    expect(s1).toBe(s2)
-  })
+  it('rrulestr https://github.com/jkbrzt/rrule/pull/164', () => {
+    const s1 = 'RRULE:FREQ=WEEKLY;WKST=WE';
+    const s2 = rrulestr(s1).toString();
+    expect(s1).toBe(s2);
+  });
 
-  it('rrulestr itteration not infinite when interval 0', function () {
-    ;[
+  it('rrulestr itteration not infinite when interval 0', () => {
+    [
       'FREQ=YEARLY;INTERVAL=0;BYSETPOS=1;BYDAY=MO',
       'FREQ=MONTHLY;INTERVAL=0;BYSETPOS=1;BYDAY=MO',
       'FREQ=DAILY;INTERVAL=0;BYSETPOS=1;BYDAY=MO',
       'FREQ=HOURLY;INTERVAL=0;BYSETPOS=1;BYDAY=MO',
       'FREQ=MINUTELY;INTERVAL=0;BYSETPOS=1;BYDAY=MO',
       'FREQ=SECONDLY;INTERVAL=0;BYSETPOS=1;BYDAY=MO',
-    ].map((s) => expect(rrulestr(s).count()).toBe(0))
-  })
+    ].map((s) => expect(rrulestr(s).count()).toBe(0));
+  });
 
-  it('does not mutate the passed-in options object', function () {
+  it('does not mutate the passed-in options object', () => {
     const options = {
       freq: RRule.MONTHLY,
       dtstart: new Date(2013, 0, 1),
       count: 3,
       bymonthday: [28],
-    }
-    const rule = new RRule(options)
+    };
+    const rule = new RRule(options);
 
     expect(options).toEqual({
       freq: RRule.MONTHLY,
       dtstart: new Date(2013, 0, 1),
       count: 3,
       bymonthday: [28],
-    })
-    expect(rule.origOptions).toEqual(options)
-  })
+    });
+    expect(rule.origOptions).toEqual(options);
+  });
 
   testRecurring(
     'missing Feb 28 https://github.com/jakubroztocil/rrule/issues/21',
@@ -70,8 +70,8 @@ describe('RRule', function () {
       count: 3,
       bymonthday: [28],
     }),
-    [datetime(2013, 1, 28), datetime(2013, 2, 28), datetime(2013, 3, 28)]
-  )
+    [datetime(2013, 1, 28), datetime(2013, 2, 28), datetime(2013, 3, 28)],
+  );
 
   // =============================================================================
   // The original `dateutil.rrule` test suite converted from Py to JS.
@@ -87,8 +87,8 @@ describe('RRule', function () {
       method: 'before',
       args: [parse('19970905T090000')],
     },
-    datetime(1997, 9, 4, 9, 0)
-  )
+    datetime(1997, 9, 4, 9, 0),
+  );
 
   testRecurring(
     'testBeforeInc',
@@ -100,8 +100,8 @@ describe('RRule', function () {
       method: 'before',
       args: [parse('19970905T090000'), true],
     },
-    datetime(1997, 9, 5, 9, 0)
-  )
+    datetime(1997, 9, 5, 9, 0),
+  );
 
   testRecurring(
     'testAfter',
@@ -113,8 +113,8 @@ describe('RRule', function () {
       method: 'after',
       args: [parse('19970904T090000')],
     },
-    datetime(1997, 9, 5, 9, 0)
-  )
+    datetime(1997, 9, 5, 9, 0),
+  );
 
   testRecurring(
     'testAfterInc',
@@ -126,8 +126,8 @@ describe('RRule', function () {
       method: 'after',
       args: [parse('19970904T090000'), true],
     },
-    datetime(1997, 9, 4, 9, 0)
-  )
+    datetime(1997, 9, 4, 9, 0),
+  );
 
   testRecurring(
     'testBetween',
@@ -143,8 +143,8 @@ describe('RRule', function () {
       datetime(1997, 9, 3, 9, 0),
       datetime(1997, 9, 4, 9, 0),
       datetime(1997, 9, 5, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testBetweenInc',
@@ -162,8 +162,8 @@ describe('RRule', function () {
       datetime(1997, 9, 4, 9, 0),
       datetime(1997, 9, 5, 9, 0),
       datetime(1997, 9, 6, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testBetweenWithTZ',
@@ -183,8 +183,8 @@ describe('RRule', function () {
       expectedDate(datetime(2022, 6, 28, 9, 0), undefined, 'Europe/London'),
       expectedDate(datetime(2022, 7, 5, 9, 0), undefined, 'Europe/London'),
       expectedDate(datetime(2022, 7, 12, 9, 0), undefined, 'Europe/London'),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearly',
@@ -197,8 +197,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1998, 9, 2, 9, 0),
       datetime(1999, 9, 2, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyInterval',
@@ -212,8 +212,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1999, 9, 2, 9, 0),
       datetime(2001, 9, 2, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyIntervalLarge',
@@ -227,8 +227,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(2097, 9, 2, 9, 0),
       datetime(2197, 9, 2, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByMonth',
@@ -242,8 +242,8 @@ describe('RRule', function () {
       datetime(1998, 1, 2, 9, 0),
       datetime(1998, 3, 2, 9, 0),
       datetime(1999, 1, 2, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByMonthDay',
@@ -257,8 +257,8 @@ describe('RRule', function () {
       datetime(1997, 9, 3, 9, 0),
       datetime(1997, 10, 1, 9, 0),
       datetime(1997, 10, 3, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByMonthAndMonthDay',
@@ -273,8 +273,8 @@ describe('RRule', function () {
       datetime(1998, 1, 5, 9, 0),
       datetime(1998, 1, 7, 9, 0),
       datetime(1998, 3, 5, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByWeekDay',
@@ -288,8 +288,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 4, 9, 0),
       datetime(1997, 9, 9, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByNWeekDay',
@@ -303,8 +303,8 @@ describe('RRule', function () {
       datetime(1997, 12, 25, 9, 0),
       datetime(1998, 1, 6, 9, 0),
       datetime(1998, 12, 31, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByNWeekDayLarge',
@@ -318,8 +318,8 @@ describe('RRule', function () {
       datetime(1997, 10, 2, 9, 0),
       datetime(1998, 3, 31, 9, 0),
       datetime(1998, 10, 8, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByMonthAndWeekDay',
@@ -334,8 +334,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 1, 6, 9, 0),
       datetime(1998, 1, 8, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByMonthAndNWeekDay',
@@ -350,8 +350,8 @@ describe('RRule', function () {
       datetime(1998, 1, 6, 9, 0),
       datetime(1998, 1, 29, 9, 0),
       datetime(1998, 3, 3, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByMonthAndNWeekDayLarge',
@@ -366,8 +366,8 @@ describe('RRule', function () {
       datetime(1998, 1, 15, 9, 0),
       datetime(1998, 1, 20, 9, 0),
       datetime(1998, 3, 12, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByMonthDayAndWeekDay',
@@ -382,8 +382,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 2, 3, 9, 0),
       datetime(1998, 3, 3, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByMonthAndMonthDayAndWeekDay',
@@ -399,8 +399,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 3, 3, 9, 0),
       datetime(2001, 3, 1, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByYearDay',
@@ -415,8 +415,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 4, 10, 9, 0),
       datetime(1998, 7, 19, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByYearDayNeg',
@@ -431,8 +431,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 4, 10, 9, 0),
       datetime(1998, 7, 19, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByMonthAndYearDay',
@@ -448,8 +448,8 @@ describe('RRule', function () {
       datetime(1998, 7, 19, 9, 0),
       datetime(1999, 4, 10, 9, 0),
       datetime(1999, 7, 19, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByMonthAndYearDayNeg',
@@ -465,8 +465,8 @@ describe('RRule', function () {
       datetime(1998, 7, 19, 9, 0),
       datetime(1999, 4, 10, 9, 0),
       datetime(1999, 7, 19, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByWeekNo',
@@ -480,8 +480,8 @@ describe('RRule', function () {
       datetime(1998, 5, 11, 9, 0),
       datetime(1998, 5, 12, 9, 0),
       datetime(1998, 5, 13, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByWeekNoAndWeekDay',
@@ -498,8 +498,8 @@ describe('RRule', function () {
       datetime(1997, 12, 29, 9, 0),
       datetime(1999, 1, 4, 9, 0),
       datetime(2000, 1, 3, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByWeekNoAndWeekDayLarge',
@@ -516,8 +516,8 @@ describe('RRule', function () {
       datetime(1997, 12, 28, 9, 0),
       datetime(1998, 12, 27, 9, 0),
       datetime(2000, 1, 2, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByWeekNoAndWeekDayLast',
@@ -532,8 +532,8 @@ describe('RRule', function () {
       datetime(1997, 12, 28, 9, 0),
       datetime(1999, 1, 3, 9, 0),
       datetime(2000, 1, 2, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByEaster',
@@ -542,8 +542,8 @@ describe('RRule', function () {
       datetime(1998, 4, 12, 9, 0),
       datetime(1999, 4, 4, 9, 0),
       datetime(2000, 4, 23, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByEasterPos',
@@ -557,8 +557,8 @@ describe('RRule', function () {
       datetime(1998, 4, 13, 9, 0),
       datetime(1999, 4, 5, 9, 0),
       datetime(2000, 4, 24, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByEasterNeg',
@@ -572,8 +572,8 @@ describe('RRule', function () {
       datetime(1998, 4, 11, 9, 0),
       datetime(1999, 4, 3, 9, 0),
       datetime(2000, 4, 22, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByWeekNoAndWeekDay53',
@@ -588,8 +588,8 @@ describe('RRule', function () {
       datetime(1998, 12, 28, 9, 0),
       datetime(2004, 12, 27, 9, 0),
       datetime(2009, 12, 28, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByHour',
@@ -603,8 +603,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 0),
       datetime(1998, 9, 2, 6, 0),
       datetime(1998, 9, 2, 18, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByMinute',
@@ -618,8 +618,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 6),
       datetime(1997, 9, 2, 9, 18),
       datetime(1998, 9, 2, 9, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyBySecond',
@@ -633,8 +633,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0, 6),
       datetime(1997, 9, 2, 9, 0, 18),
       datetime(1998, 9, 2, 9, 0, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByHourAndMinute',
@@ -649,8 +649,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 6),
       datetime(1997, 9, 2, 18, 18),
       datetime(1998, 9, 2, 6, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByHourAndSecond',
@@ -665,8 +665,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 0, 6),
       datetime(1997, 9, 2, 18, 0, 18),
       datetime(1998, 9, 2, 6, 0, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByMinuteAndSecond',
@@ -681,8 +681,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 6, 6),
       datetime(1997, 9, 2, 9, 6, 18),
       datetime(1997, 9, 2, 9, 18, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyByHourAndMinuteAndSecond',
@@ -698,8 +698,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 6, 6),
       datetime(1997, 9, 2, 18, 6, 18),
       datetime(1997, 9, 2, 18, 18, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyBySetPos',
@@ -715,8 +715,8 @@ describe('RRule', function () {
       datetime(1997, 11, 15, 18, 0),
       datetime(1998, 2, 15, 6, 0),
       datetime(1998, 11, 15, 18, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testYearlyBetweenInc',
@@ -728,8 +728,8 @@ describe('RRule', function () {
       method: 'between',
       args: [parse('20160101T000000'), parse('20160101T000000'), true],
     },
-    [datetime(2016, 1, 1)]
-  )
+    [datetime(2016, 1, 1)],
+  );
 
   testRecurring(
     'testYearlyBetweenIncLargeSpan',
@@ -741,8 +741,8 @@ describe('RRule', function () {
       method: 'between',
       args: [parse('20160101T000000'), parse('20160101T000000'), true],
     },
-    [datetime(2016, 1, 1)]
-  )
+    [datetime(2016, 1, 1)],
+  );
 
   testRecurring(
     'testMonthly',
@@ -755,8 +755,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 10, 2, 9, 0),
       datetime(1997, 11, 2, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyInterval',
@@ -770,8 +770,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 11, 2, 9, 0),
       datetime(1998, 1, 2, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyIntervalLarge',
@@ -785,8 +785,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1999, 3, 2, 9, 0),
       datetime(2000, 9, 2, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByMonth',
@@ -800,8 +800,8 @@ describe('RRule', function () {
       datetime(1998, 1, 2, 9, 0),
       datetime(1998, 3, 2, 9, 0),
       datetime(1999, 1, 2, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByMonthDay',
@@ -815,8 +815,8 @@ describe('RRule', function () {
       datetime(1997, 9, 3, 9, 0),
       datetime(1997, 10, 1, 9, 0),
       datetime(1997, 10, 3, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByMonthAndMonthDay',
@@ -831,8 +831,8 @@ describe('RRule', function () {
       datetime(1998, 1, 5, 9, 0),
       datetime(1998, 1, 7, 9, 0),
       datetime(1998, 3, 5, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByWeekDay',
@@ -846,8 +846,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 4, 9, 0),
       datetime(1997, 9, 9, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByNWeekDay',
@@ -861,8 +861,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 25, 9, 0),
       datetime(1997, 10, 7, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByNWeekDayLarge',
@@ -876,8 +876,8 @@ describe('RRule', function () {
       datetime(1997, 9, 11, 9, 0),
       datetime(1997, 9, 16, 9, 0),
       datetime(1997, 10, 16, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByMonthAndWeekDay',
@@ -892,8 +892,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 1, 6, 9, 0),
       datetime(1998, 1, 8, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByMonthAndNWeekDay',
@@ -908,8 +908,8 @@ describe('RRule', function () {
       datetime(1998, 1, 6, 9, 0),
       datetime(1998, 1, 29, 9, 0),
       datetime(1998, 3, 3, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByMonthAndNWeekDayLarge',
@@ -924,8 +924,8 @@ describe('RRule', function () {
       datetime(1998, 1, 15, 9, 0),
       datetime(1998, 1, 20, 9, 0),
       datetime(1998, 3, 12, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByMonthDayAndWeekDay',
@@ -940,8 +940,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 2, 3, 9, 0),
       datetime(1998, 3, 3, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByMonthAndMonthDayAndWeekDay',
@@ -957,8 +957,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 3, 3, 9, 0),
       datetime(2001, 3, 1, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByYearDay',
@@ -973,8 +973,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 4, 10, 9, 0),
       datetime(1998, 7, 19, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByYearDayNeg',
@@ -989,8 +989,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 4, 10, 9, 0),
       datetime(1998, 7, 19, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByMonthAndYearDay',
@@ -1006,8 +1006,8 @@ describe('RRule', function () {
       datetime(1998, 7, 19, 9, 0),
       datetime(1999, 4, 10, 9, 0),
       datetime(1999, 7, 19, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByMonthAndYearDayNeg',
@@ -1023,8 +1023,8 @@ describe('RRule', function () {
       datetime(1998, 7, 19, 9, 0),
       datetime(1999, 4, 10, 9, 0),
       datetime(1999, 7, 19, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByWeekNo',
@@ -1038,8 +1038,8 @@ describe('RRule', function () {
       datetime(1998, 5, 11, 9, 0),
       datetime(1998, 5, 12, 9, 0),
       datetime(1998, 5, 13, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByWeekNoAndWeekDay',
@@ -1056,8 +1056,8 @@ describe('RRule', function () {
       datetime(1997, 12, 29, 9, 0),
       datetime(1999, 1, 4, 9, 0),
       datetime(2000, 1, 3, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByWeekNoAndWeekDayLarge',
@@ -1074,8 +1074,8 @@ describe('RRule', function () {
       datetime(1997, 12, 28, 9, 0),
       datetime(1998, 12, 27, 9, 0),
       datetime(2000, 1, 2, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByWeekNoAndWeekDayLast',
@@ -1090,8 +1090,8 @@ describe('RRule', function () {
       datetime(1997, 12, 28, 9, 0),
       datetime(1999, 1, 3, 9, 0),
       datetime(2000, 1, 2, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByWeekNoAndWeekDay53',
@@ -1106,8 +1106,8 @@ describe('RRule', function () {
       datetime(1998, 12, 28, 9, 0),
       datetime(2004, 12, 27, 9, 0),
       datetime(2009, 12, 28, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByEaster',
@@ -1121,8 +1121,8 @@ describe('RRule', function () {
       datetime(1998, 4, 12, 9, 0),
       datetime(1999, 4, 4, 9, 0),
       datetime(2000, 4, 23, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByEasterPos',
@@ -1136,8 +1136,8 @@ describe('RRule', function () {
       datetime(1998, 4, 13, 9, 0),
       datetime(1999, 4, 5, 9, 0),
       datetime(2000, 4, 24, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByEasterNeg',
@@ -1151,8 +1151,8 @@ describe('RRule', function () {
       datetime(1998, 4, 11, 9, 0),
       datetime(1999, 4, 3, 9, 0),
       datetime(2000, 4, 22, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByHour',
@@ -1166,8 +1166,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 0),
       datetime(1997, 10, 2, 6, 0),
       datetime(1997, 10, 2, 18, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByMinute',
@@ -1181,8 +1181,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 6),
       datetime(1997, 9, 2, 9, 18),
       datetime(1997, 10, 2, 9, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyBySecond',
@@ -1196,8 +1196,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0, 6),
       datetime(1997, 9, 2, 9, 0, 18),
       datetime(1997, 10, 2, 9, 0, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByHourAndMinute',
@@ -1212,8 +1212,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 6),
       datetime(1997, 9, 2, 18, 18),
       datetime(1997, 10, 2, 6, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByHourAndSecond',
@@ -1228,8 +1228,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 0, 6),
       datetime(1997, 9, 2, 18, 0, 18),
       datetime(1997, 10, 2, 6, 0, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByMinuteAndSecond',
@@ -1244,8 +1244,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 6, 6),
       datetime(1997, 9, 2, 9, 6, 18),
       datetime(1997, 9, 2, 9, 18, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyByHourAndMinuteAndSecond',
@@ -1261,8 +1261,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 6, 6),
       datetime(1997, 9, 2, 18, 6, 18),
       datetime(1997, 9, 2, 18, 18, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyBySetPos',
@@ -1278,8 +1278,8 @@ describe('RRule', function () {
       datetime(1997, 9, 13, 18, 0),
       datetime(1997, 9, 17, 6, 0),
       datetime(1997, 10, 13, 18, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyNegByMonthDayJanFebForNonLeapYear',
@@ -1294,8 +1294,8 @@ describe('RRule', function () {
       datetime(2014, 1, 31, 9, 0),
       datetime(2014, 2, 28, 9, 0),
       datetime(2014, 3, 31, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMonthlyNegByMonthDayJanFebForLeapYear',
@@ -1310,8 +1310,8 @@ describe('RRule', function () {
       datetime(2016, 1, 31, 9, 0),
       datetime(2016, 2, 29, 9, 0),
       datetime(2016, 3, 31, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeekly',
@@ -1324,8 +1324,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 9, 9, 0),
       datetime(1997, 9, 16, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyInterval',
@@ -1339,8 +1339,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 16, 9, 0),
       datetime(1997, 9, 30, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyIntervalLarge',
@@ -1354,8 +1354,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1998, 1, 20, 9, 0),
       datetime(1998, 6, 9, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByMonth',
@@ -1369,8 +1369,8 @@ describe('RRule', function () {
       datetime(1998, 1, 6, 9, 0),
       datetime(1998, 1, 13, 9, 0),
       datetime(1998, 1, 20, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByMonthDay',
@@ -1384,8 +1384,8 @@ describe('RRule', function () {
       datetime(1997, 9, 3, 9, 0),
       datetime(1997, 10, 1, 9, 0),
       datetime(1997, 10, 3, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByMonthAndMonthDay',
@@ -1400,8 +1400,8 @@ describe('RRule', function () {
       datetime(1998, 1, 5, 9, 0),
       datetime(1998, 1, 7, 9, 0),
       datetime(1998, 3, 5, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByWeekDay',
@@ -1415,8 +1415,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 4, 9, 0),
       datetime(1997, 9, 9, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByNWeekDay',
@@ -1430,8 +1430,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 4, 9, 0),
       datetime(1997, 9, 9, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByMonthAndWeekDay',
@@ -1449,8 +1449,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 1, 6, 9, 0),
       datetime(1998, 1, 8, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByMonthAndNWeekDay',
@@ -1465,8 +1465,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 1, 6, 9, 0),
       datetime(1998, 1, 8, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByMonthDayAndWeekDay',
@@ -1481,8 +1481,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 2, 3, 9, 0),
       datetime(1998, 3, 3, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByMonthAndMonthDayAndWeekDay',
@@ -1498,8 +1498,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 3, 3, 9, 0),
       datetime(2001, 3, 1, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByYearDay',
@@ -1514,8 +1514,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 4, 10, 9, 0),
       datetime(1998, 7, 19, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByYearDayNeg',
@@ -1530,8 +1530,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 4, 10, 9, 0),
       datetime(1998, 7, 19, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByMonthAndYearDay',
@@ -1547,8 +1547,8 @@ describe('RRule', function () {
       datetime(1998, 7, 19, 9, 0),
       datetime(1999, 1, 1, 9, 0),
       datetime(1999, 7, 19, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByMonthAndYearDayNeg',
@@ -1564,8 +1564,8 @@ describe('RRule', function () {
       datetime(1998, 7, 19, 9, 0),
       datetime(1999, 1, 1, 9, 0),
       datetime(1999, 7, 19, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByWeekNo',
@@ -1579,8 +1579,8 @@ describe('RRule', function () {
       datetime(1998, 5, 11, 9, 0),
       datetime(1998, 5, 12, 9, 0),
       datetime(1998, 5, 13, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByWeekNoAndWeekDay',
@@ -1597,8 +1597,8 @@ describe('RRule', function () {
       datetime(1997, 12, 29, 9, 0),
       datetime(1999, 1, 4, 9, 0),
       datetime(2000, 1, 3, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByWeekNoAndWeekDayLarge',
@@ -1615,8 +1615,8 @@ describe('RRule', function () {
       datetime(1997, 12, 28, 9, 0),
       datetime(1998, 12, 27, 9, 0),
       datetime(2000, 1, 2, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByWeekNoAndWeekDayLast',
@@ -1631,8 +1631,8 @@ describe('RRule', function () {
       datetime(1997, 12, 28, 9, 0),
       datetime(1999, 1, 3, 9, 0),
       datetime(2000, 1, 2, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByWeekNoAndWeekDay53',
@@ -1647,8 +1647,8 @@ describe('RRule', function () {
       datetime(1998, 12, 28, 9, 0),
       datetime(2004, 12, 27, 9, 0),
       datetime(2009, 12, 28, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByEaster',
@@ -1662,8 +1662,8 @@ describe('RRule', function () {
       datetime(1998, 4, 12, 9, 0),
       datetime(1999, 4, 4, 9, 0),
       datetime(2000, 4, 23, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByEasterPos',
@@ -1677,8 +1677,8 @@ describe('RRule', function () {
       datetime(1998, 4, 13, 9, 0),
       datetime(1999, 4, 5, 9, 0),
       datetime(2000, 4, 24, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByEasterNeg',
@@ -1692,8 +1692,8 @@ describe('RRule', function () {
       datetime(1998, 4, 11, 9, 0),
       datetime(1999, 4, 3, 9, 0),
       datetime(2000, 4, 22, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByHour',
@@ -1707,8 +1707,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 0),
       datetime(1997, 9, 9, 6, 0),
       datetime(1997, 9, 9, 18, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByMinute',
@@ -1722,8 +1722,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 6),
       datetime(1997, 9, 2, 9, 18),
       datetime(1997, 9, 9, 9, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyBySecond',
@@ -1737,8 +1737,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0, 6),
       datetime(1997, 9, 2, 9, 0, 18),
       datetime(1997, 9, 9, 9, 0, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByHourAndMinute',
@@ -1753,8 +1753,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 6),
       datetime(1997, 9, 2, 18, 18),
       datetime(1997, 9, 9, 6, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByHourAndSecond',
@@ -1769,8 +1769,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 0, 6),
       datetime(1997, 9, 2, 18, 0, 18),
       datetime(1997, 9, 9, 6, 0, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByMinuteAndSecond',
@@ -1785,8 +1785,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 6, 6),
       datetime(1997, 9, 2, 9, 6, 18),
       datetime(1997, 9, 2, 9, 18, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyByHourAndMinuteAndSecond',
@@ -1802,8 +1802,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 6, 6),
       datetime(1997, 9, 2, 18, 6, 18),
       datetime(1997, 9, 2, 18, 18, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWeeklyBySetPos',
@@ -1819,8 +1819,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 0),
       datetime(1997, 9, 4, 6, 0),
       datetime(1997, 9, 9, 18, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDaily',
@@ -1833,8 +1833,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 3, 9, 0),
       datetime(1997, 9, 4, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyInterval',
@@ -1848,8 +1848,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 4, 9, 0),
       datetime(1997, 9, 6, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyIntervalLarge',
@@ -1863,8 +1863,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 12, 3, 9, 0),
       datetime(1998, 3, 5, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByMonth',
@@ -1878,8 +1878,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 1, 2, 9, 0),
       datetime(1998, 1, 3, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByMonthDay',
@@ -1893,8 +1893,8 @@ describe('RRule', function () {
       datetime(1997, 9, 3, 9, 0),
       datetime(1997, 10, 1, 9, 0),
       datetime(1997, 10, 3, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByMonthAndMonthDay',
@@ -1909,8 +1909,8 @@ describe('RRule', function () {
       datetime(1998, 1, 5, 9, 0),
       datetime(1998, 1, 7, 9, 0),
       datetime(1998, 3, 5, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByWeekDay',
@@ -1924,8 +1924,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 4, 9, 0),
       datetime(1997, 9, 9, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByNWeekDay',
@@ -1939,8 +1939,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 4, 9, 0),
       datetime(1997, 9, 9, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByMonthAndWeekDay',
@@ -1955,8 +1955,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 1, 6, 9, 0),
       datetime(1998, 1, 8, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByMonthAndNWeekDay',
@@ -1971,8 +1971,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 1, 6, 9, 0),
       datetime(1998, 1, 8, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByMonthDayAndWeekDay',
@@ -1987,8 +1987,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 2, 3, 9, 0),
       datetime(1998, 3, 3, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByMonthAndMonthDayAndWeekDay',
@@ -2004,8 +2004,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 3, 3, 9, 0),
       datetime(2001, 3, 1, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByYearDay',
@@ -2020,8 +2020,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 4, 10, 9, 0),
       datetime(1998, 7, 19, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByYearDayNeg',
@@ -2036,8 +2036,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 9, 0),
       datetime(1998, 4, 10, 9, 0),
       datetime(1998, 7, 19, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByMonthAndYearDay',
@@ -2053,8 +2053,8 @@ describe('RRule', function () {
       datetime(1998, 7, 19, 9, 0),
       datetime(1999, 1, 1, 9, 0),
       datetime(1999, 7, 19, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByMonthAndYearDayNeg',
@@ -2070,8 +2070,8 @@ describe('RRule', function () {
       datetime(1998, 7, 19, 9, 0),
       datetime(1999, 1, 1, 9, 0),
       datetime(1999, 7, 19, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByWeekNo',
@@ -2085,8 +2085,8 @@ describe('RRule', function () {
       datetime(1998, 5, 11, 9, 0),
       datetime(1998, 5, 12, 9, 0),
       datetime(1998, 5, 13, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByWeekNoAndWeekDay',
@@ -2103,8 +2103,8 @@ describe('RRule', function () {
       datetime(1997, 12, 29, 9, 0),
       datetime(1999, 1, 4, 9, 0),
       datetime(2000, 1, 3, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByWeekNoAndWeekDayLarge',
@@ -2121,8 +2121,8 @@ describe('RRule', function () {
       datetime(1997, 12, 28, 9, 0),
       datetime(1998, 12, 27, 9, 0),
       datetime(2000, 1, 2, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByWeekNoAndWeekDayLast',
@@ -2137,8 +2137,8 @@ describe('RRule', function () {
       datetime(1997, 12, 28, 9, 0),
       datetime(1999, 1, 3, 9, 0),
       datetime(2000, 1, 2, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByWeekNoAndWeekDay53',
@@ -2153,8 +2153,8 @@ describe('RRule', function () {
       datetime(1998, 12, 28, 9, 0),
       datetime(2004, 12, 27, 9, 0),
       datetime(2009, 12, 28, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByEaster',
@@ -2168,8 +2168,8 @@ describe('RRule', function () {
       datetime(1998, 4, 12, 9, 0),
       datetime(1999, 4, 4, 9, 0),
       datetime(2000, 4, 23, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByEasterPos',
@@ -2183,8 +2183,8 @@ describe('RRule', function () {
       datetime(1998, 4, 13, 9, 0),
       datetime(1999, 4, 5, 9, 0),
       datetime(2000, 4, 24, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByEasterNeg',
@@ -2198,8 +2198,8 @@ describe('RRule', function () {
       datetime(1998, 4, 11, 9, 0),
       datetime(1999, 4, 3, 9, 0),
       datetime(2000, 4, 22, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByHour',
@@ -2213,8 +2213,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 0),
       datetime(1997, 9, 3, 6, 0),
       datetime(1997, 9, 3, 18, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByMinute',
@@ -2228,8 +2228,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 6),
       datetime(1997, 9, 2, 9, 18),
       datetime(1997, 9, 3, 9, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyBySecond',
@@ -2243,8 +2243,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0, 6),
       datetime(1997, 9, 2, 9, 0, 18),
       datetime(1997, 9, 3, 9, 0, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByHourAndMinute',
@@ -2259,8 +2259,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 6),
       datetime(1997, 9, 2, 18, 18),
       datetime(1997, 9, 3, 6, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByHourAndSecond',
@@ -2275,8 +2275,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 0, 6),
       datetime(1997, 9, 2, 18, 0, 18),
       datetime(1997, 9, 3, 6, 0, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByMinuteAndSecond',
@@ -2291,8 +2291,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 6, 6),
       datetime(1997, 9, 2, 9, 6, 18),
       datetime(1997, 9, 2, 9, 18, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyByHourAndMinuteAndSecond',
@@ -2308,8 +2308,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 6, 6),
       datetime(1997, 9, 2, 18, 6, 18),
       datetime(1997, 9, 2, 18, 18, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDailyBySetPos',
@@ -2325,8 +2325,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 15),
       datetime(1997, 9, 3, 6, 45),
       datetime(1997, 9, 3, 18, 15),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourly',
@@ -2339,8 +2339,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 2, 10, 0),
       datetime(1997, 9, 2, 11, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyInterval',
@@ -2354,8 +2354,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 2, 11, 0),
       datetime(1997, 9, 2, 13, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyIntervalLarge',
@@ -2369,8 +2369,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 10, 4, 10, 0),
       datetime(1997, 11, 5, 11, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByMonth',
@@ -2384,8 +2384,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 0, 0),
       datetime(1998, 1, 1, 1, 0),
       datetime(1998, 1, 1, 2, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByMonthDay',
@@ -2399,8 +2399,8 @@ describe('RRule', function () {
       datetime(1997, 9, 3, 0, 0),
       datetime(1997, 9, 3, 1, 0),
       datetime(1997, 9, 3, 2, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByMonthAndMonthDay',
@@ -2415,8 +2415,8 @@ describe('RRule', function () {
       datetime(1998, 1, 5, 0, 0),
       datetime(1998, 1, 5, 1, 0),
       datetime(1998, 1, 5, 2, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByWeekDay',
@@ -2430,8 +2430,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 2, 10, 0),
       datetime(1997, 9, 2, 11, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByNWeekDay',
@@ -2445,8 +2445,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 2, 10, 0),
       datetime(1997, 9, 2, 11, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByMonthAndWeekDay',
@@ -2461,8 +2461,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 0, 0),
       datetime(1998, 1, 1, 1, 0),
       datetime(1998, 1, 1, 2, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByMonthAndNWeekDay',
@@ -2477,8 +2477,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 0, 0),
       datetime(1998, 1, 1, 1, 0),
       datetime(1998, 1, 1, 2, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByMonthDayAndWeekDay',
@@ -2493,8 +2493,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 0, 0),
       datetime(1998, 1, 1, 1, 0),
       datetime(1998, 1, 1, 2, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByMonthAndMonthDayAndWeekDay',
@@ -2510,8 +2510,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 0, 0),
       datetime(1998, 1, 1, 1, 0),
       datetime(1998, 1, 1, 2, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByYearDay',
@@ -2526,8 +2526,8 @@ describe('RRule', function () {
       datetime(1997, 12, 31, 1, 0),
       datetime(1997, 12, 31, 2, 0),
       datetime(1997, 12, 31, 3, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByYearDayNeg',
@@ -2542,8 +2542,8 @@ describe('RRule', function () {
       datetime(1997, 12, 31, 1, 0),
       datetime(1997, 12, 31, 2, 0),
       datetime(1997, 12, 31, 3, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByMonthAndYearDay',
@@ -2559,8 +2559,8 @@ describe('RRule', function () {
       datetime(1998, 4, 10, 1, 0),
       datetime(1998, 4, 10, 2, 0),
       datetime(1998, 4, 10, 3, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByMonthAndYearDayNeg',
@@ -2576,8 +2576,8 @@ describe('RRule', function () {
       datetime(1998, 4, 10, 1, 0),
       datetime(1998, 4, 10, 2, 0),
       datetime(1998, 4, 10, 3, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByWeekNo',
@@ -2591,8 +2591,8 @@ describe('RRule', function () {
       datetime(1998, 5, 11, 0, 0),
       datetime(1998, 5, 11, 1, 0),
       datetime(1998, 5, 11, 2, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByWeekNoAndWeekDay',
@@ -2607,8 +2607,8 @@ describe('RRule', function () {
       datetime(1997, 12, 29, 0, 0),
       datetime(1997, 12, 29, 1, 0),
       datetime(1997, 12, 29, 2, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByWeekNoAndWeekDayLarge',
@@ -2623,8 +2623,8 @@ describe('RRule', function () {
       datetime(1997, 12, 28, 0, 0),
       datetime(1997, 12, 28, 1, 0),
       datetime(1997, 12, 28, 2, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByWeekNoAndWeekDayLast',
@@ -2639,8 +2639,8 @@ describe('RRule', function () {
       datetime(1997, 12, 28, 0, 0),
       datetime(1997, 12, 28, 1, 0),
       datetime(1997, 12, 28, 2, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByWeekNoAndWeekDay53',
@@ -2655,8 +2655,8 @@ describe('RRule', function () {
       datetime(1998, 12, 28, 0, 0),
       datetime(1998, 12, 28, 1, 0),
       datetime(1998, 12, 28, 2, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring.skip(
     'testHourlyByEaster',
@@ -2670,8 +2670,8 @@ describe('RRule', function () {
       datetime(1998, 4, 12, 0, 0),
       datetime(1998, 4, 12, 1, 0),
       datetime(1998, 4, 12, 2, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring.skip(
     'testHourlyByEasterPos',
@@ -2685,8 +2685,8 @@ describe('RRule', function () {
       datetime(1998, 4, 13, 0, 0),
       datetime(1998, 4, 13, 1, 0),
       datetime(1998, 4, 13, 2, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring.skip(
     'testHourlyByEasterNeg',
@@ -2700,8 +2700,8 @@ describe('RRule', function () {
       datetime(1998, 4, 11, 0, 0),
       datetime(1998, 4, 11, 1, 0),
       datetime(1998, 4, 11, 2, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByHour',
@@ -2715,8 +2715,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 0),
       datetime(1997, 9, 3, 6, 0),
       datetime(1997, 9, 3, 18, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByMinute',
@@ -2730,8 +2730,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 6),
       datetime(1997, 9, 2, 9, 18),
       datetime(1997, 9, 2, 10, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyBySecond',
@@ -2745,8 +2745,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0, 6),
       datetime(1997, 9, 2, 9, 0, 18),
       datetime(1997, 9, 2, 10, 0, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByHourAndMinute',
@@ -2761,8 +2761,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 6),
       datetime(1997, 9, 2, 18, 18),
       datetime(1997, 9, 3, 6, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByHourAndSecond',
@@ -2777,8 +2777,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 0, 6),
       datetime(1997, 9, 2, 18, 0, 18),
       datetime(1997, 9, 3, 6, 0, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByMinuteAndSecond',
@@ -2793,8 +2793,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 6, 6),
       datetime(1997, 9, 2, 9, 6, 18),
       datetime(1997, 9, 2, 9, 18, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyByHourAndMinuteAndSecond',
@@ -2810,8 +2810,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 6, 6),
       datetime(1997, 9, 2, 18, 6, 18),
       datetime(1997, 9, 2, 18, 18, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testHourlyBySetPos',
@@ -2827,8 +2827,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 15, 45),
       datetime(1997, 9, 2, 9, 45, 15),
       datetime(1997, 9, 2, 10, 15, 45),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutely',
@@ -2841,8 +2841,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 2, 9, 1),
       datetime(1997, 9, 2, 9, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyInterval',
@@ -2856,8 +2856,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 2, 9, 2),
       datetime(1997, 9, 2, 9, 4),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyIntervalLarge',
@@ -2871,8 +2871,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 3, 10, 1),
       datetime(1997, 9, 4, 11, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByMonth',
@@ -2886,8 +2886,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 0, 0),
       datetime(1998, 1, 1, 0, 1),
       datetime(1998, 1, 1, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByMonthDay',
@@ -2901,8 +2901,8 @@ describe('RRule', function () {
       datetime(1997, 9, 3, 0, 0),
       datetime(1997, 9, 3, 0, 1),
       datetime(1997, 9, 3, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByMonthAndMonthDay',
@@ -2917,8 +2917,8 @@ describe('RRule', function () {
       datetime(1998, 1, 5, 0, 0),
       datetime(1998, 1, 5, 0, 1),
       datetime(1998, 1, 5, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByWeekDay',
@@ -2932,8 +2932,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 2, 9, 1),
       datetime(1997, 9, 2, 9, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByNWeekDay',
@@ -2947,8 +2947,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 2, 9, 1),
       datetime(1997, 9, 2, 9, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByMonthAndWeekDay',
@@ -2963,8 +2963,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 0, 0),
       datetime(1998, 1, 1, 0, 1),
       datetime(1998, 1, 1, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByMonthAndNWeekDay',
@@ -2979,8 +2979,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 0, 0),
       datetime(1998, 1, 1, 0, 1),
       datetime(1998, 1, 1, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByMonthDayAndWeekDay',
@@ -2995,8 +2995,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 0, 0),
       datetime(1998, 1, 1, 0, 1),
       datetime(1998, 1, 1, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByMonthAndMonthDayAndWeekDay',
@@ -3012,8 +3012,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 0, 0),
       datetime(1998, 1, 1, 0, 1),
       datetime(1998, 1, 1, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByYearDay',
@@ -3028,8 +3028,8 @@ describe('RRule', function () {
       datetime(1997, 12, 31, 0, 1),
       datetime(1997, 12, 31, 0, 2),
       datetime(1997, 12, 31, 0, 3),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByYearDayNeg',
@@ -3044,8 +3044,8 @@ describe('RRule', function () {
       datetime(1997, 12, 31, 0, 1),
       datetime(1997, 12, 31, 0, 2),
       datetime(1997, 12, 31, 0, 3),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByMonthAndYearDay',
@@ -3061,8 +3061,8 @@ describe('RRule', function () {
       datetime(1998, 4, 10, 0, 1),
       datetime(1998, 4, 10, 0, 2),
       datetime(1998, 4, 10, 0, 3),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByMonthAndYearDayNeg',
@@ -3078,8 +3078,8 @@ describe('RRule', function () {
       datetime(1998, 4, 10, 0, 1),
       datetime(1998, 4, 10, 0, 2),
       datetime(1998, 4, 10, 0, 3),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByWeekNo',
@@ -3093,8 +3093,8 @@ describe('RRule', function () {
       datetime(1998, 5, 11, 0, 0),
       datetime(1998, 5, 11, 0, 1),
       datetime(1998, 5, 11, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByWeekNoAndWeekDay',
@@ -3109,8 +3109,8 @@ describe('RRule', function () {
       datetime(1997, 12, 29, 0, 0),
       datetime(1997, 12, 29, 0, 1),
       datetime(1997, 12, 29, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByWeekNoAndWeekDayLarge',
@@ -3125,8 +3125,8 @@ describe('RRule', function () {
       datetime(1997, 12, 28, 0, 0),
       datetime(1997, 12, 28, 0, 1),
       datetime(1997, 12, 28, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByWeekNoAndWeekDayLast',
@@ -3141,8 +3141,8 @@ describe('RRule', function () {
       datetime(1997, 12, 28, 0, 0),
       datetime(1997, 12, 28, 0, 1),
       datetime(1997, 12, 28, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByWeekNoAndWeekDay53',
@@ -3157,8 +3157,8 @@ describe('RRule', function () {
       datetime(1998, 12, 28, 0, 0),
       datetime(1998, 12, 28, 0, 1),
       datetime(1998, 12, 28, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring.skip(
     'testMinutelyByEaster',
@@ -3172,8 +3172,8 @@ describe('RRule', function () {
       datetime(1998, 4, 12, 0, 0),
       datetime(1998, 4, 12, 0, 1),
       datetime(1998, 4, 12, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring.skip(
     'testMinutelyByEasterPos',
@@ -3187,8 +3187,8 @@ describe('RRule', function () {
       datetime(1998, 4, 13, 0, 0),
       datetime(1998, 4, 13, 0, 1),
       datetime(1998, 4, 13, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring.skip(
     'testMinutelyByEasterNeg',
@@ -3202,8 +3202,8 @@ describe('RRule', function () {
       datetime(1998, 4, 11, 0, 0),
       datetime(1998, 4, 11, 0, 1),
       datetime(1998, 4, 11, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByHour',
@@ -3217,8 +3217,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 0),
       datetime(1997, 9, 2, 18, 1),
       datetime(1997, 9, 2, 18, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByMinute',
@@ -3232,8 +3232,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 6),
       datetime(1997, 9, 2, 9, 18),
       datetime(1997, 9, 2, 10, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyBySecond',
@@ -3247,8 +3247,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0, 6),
       datetime(1997, 9, 2, 9, 0, 18),
       datetime(1997, 9, 2, 9, 1, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByHourAndMinute',
@@ -3263,8 +3263,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 6),
       datetime(1997, 9, 2, 18, 18),
       datetime(1997, 9, 3, 6, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByHourAndSecond',
@@ -3279,8 +3279,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 0, 6),
       datetime(1997, 9, 2, 18, 0, 18),
       datetime(1997, 9, 2, 18, 1, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByMinuteAndSecond',
@@ -3295,8 +3295,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 6, 6),
       datetime(1997, 9, 2, 9, 6, 18),
       datetime(1997, 9, 2, 9, 18, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyByHourAndMinuteAndSecond',
@@ -3312,8 +3312,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 6, 6),
       datetime(1997, 9, 2, 18, 6, 18),
       datetime(1997, 9, 2, 18, 18, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMinutelyBySetPos',
@@ -3328,8 +3328,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0, 15),
       datetime(1997, 9, 2, 9, 0, 45),
       datetime(1997, 9, 2, 9, 1, 15),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondly',
@@ -3342,8 +3342,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0, 0),
       datetime(1997, 9, 2, 9, 0, 1),
       datetime(1997, 9, 2, 9, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyInterval',
@@ -3357,8 +3357,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0, 0),
       datetime(1997, 9, 2, 9, 0, 2),
       datetime(1997, 9, 2, 9, 0, 4),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyIntervalLarge',
@@ -3372,8 +3372,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0, 0),
       datetime(1997, 9, 3, 10, 1, 1),
       datetime(1997, 9, 4, 11, 2, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByMonth',
@@ -3387,8 +3387,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 0, 0, 0),
       datetime(1998, 1, 1, 0, 0, 1),
       datetime(1998, 1, 1, 0, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByMonthDay',
@@ -3402,8 +3402,8 @@ describe('RRule', function () {
       datetime(1997, 9, 3, 0, 0, 0),
       datetime(1997, 9, 3, 0, 0, 1),
       datetime(1997, 9, 3, 0, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByMonthAndMonthDay',
@@ -3418,8 +3418,8 @@ describe('RRule', function () {
       datetime(1998, 1, 5, 0, 0, 0),
       datetime(1998, 1, 5, 0, 0, 1),
       datetime(1998, 1, 5, 0, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByWeekDay',
@@ -3433,8 +3433,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0, 0),
       datetime(1997, 9, 2, 9, 0, 1),
       datetime(1997, 9, 2, 9, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByNWeekDay',
@@ -3448,8 +3448,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0, 0),
       datetime(1997, 9, 2, 9, 0, 1),
       datetime(1997, 9, 2, 9, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByMonthAndWeekDay',
@@ -3464,8 +3464,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 0, 0, 0),
       datetime(1998, 1, 1, 0, 0, 1),
       datetime(1998, 1, 1, 0, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByMonthAndNWeekDay',
@@ -3480,8 +3480,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 0, 0, 0),
       datetime(1998, 1, 1, 0, 0, 1),
       datetime(1998, 1, 1, 0, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByMonthDayAndWeekDay',
@@ -3496,8 +3496,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 0, 0, 0),
       datetime(1998, 1, 1, 0, 0, 1),
       datetime(1998, 1, 1, 0, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByMonthAndMonthDayAndWeekDay',
@@ -3513,8 +3513,8 @@ describe('RRule', function () {
       datetime(1998, 1, 1, 0, 0, 0),
       datetime(1998, 1, 1, 0, 0, 1),
       datetime(1998, 1, 1, 0, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByYearDay',
@@ -3529,8 +3529,8 @@ describe('RRule', function () {
       datetime(1997, 12, 31, 0, 0, 1),
       datetime(1997, 12, 31, 0, 0, 2),
       datetime(1997, 12, 31, 0, 0, 3),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByYearDayNeg',
@@ -3545,8 +3545,8 @@ describe('RRule', function () {
       datetime(1997, 12, 31, 0, 0, 1),
       datetime(1997, 12, 31, 0, 0, 2),
       datetime(1997, 12, 31, 0, 0, 3),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByMonthAndYearDay',
@@ -3562,8 +3562,8 @@ describe('RRule', function () {
       datetime(1998, 4, 10, 0, 0, 1),
       datetime(1998, 4, 10, 0, 0, 2),
       datetime(1998, 4, 10, 0, 0, 3),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByMonthAndYearDayNeg',
@@ -3579,8 +3579,8 @@ describe('RRule', function () {
       datetime(1998, 4, 10, 0, 0, 1),
       datetime(1998, 4, 10, 0, 0, 2),
       datetime(1998, 4, 10, 0, 0, 3),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByWeekNo',
@@ -3594,8 +3594,8 @@ describe('RRule', function () {
       datetime(1998, 5, 11, 0, 0, 0),
       datetime(1998, 5, 11, 0, 0, 1),
       datetime(1998, 5, 11, 0, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByWeekNoAndWeekDay',
@@ -3610,8 +3610,8 @@ describe('RRule', function () {
       datetime(1997, 12, 29, 0, 0, 0),
       datetime(1997, 12, 29, 0, 0, 1),
       datetime(1997, 12, 29, 0, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByWeekNoAndWeekDayLarge',
@@ -3626,8 +3626,8 @@ describe('RRule', function () {
       datetime(1997, 12, 28, 0, 0, 0),
       datetime(1997, 12, 28, 0, 0, 1),
       datetime(1997, 12, 28, 0, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByWeekNoAndWeekDayLast',
@@ -3642,8 +3642,8 @@ describe('RRule', function () {
       datetime(1997, 12, 28, 0, 0, 0),
       datetime(1997, 12, 28, 0, 0, 1),
       datetime(1997, 12, 28, 0, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByWeekNoAndWeekDay53',
@@ -3658,8 +3658,8 @@ describe('RRule', function () {
       datetime(1998, 12, 28, 0, 0, 0),
       datetime(1998, 12, 28, 0, 0, 1),
       datetime(1998, 12, 28, 0, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring.skip(
     'testSecondlyByEaster',
@@ -3673,8 +3673,8 @@ describe('RRule', function () {
       datetime(1998, 4, 12, 0, 0, 0),
       datetime(1998, 4, 12, 0, 0, 1),
       datetime(1998, 4, 12, 0, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring.skip(
     'testSecondlyByEasterPos',
@@ -3688,8 +3688,8 @@ describe('RRule', function () {
       datetime(1998, 4, 13, 0, 0, 0),
       datetime(1998, 4, 13, 0, 0, 1),
       datetime(1998, 4, 13, 0, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring.skip(
     'testSecondlyByEasterNeg',
@@ -3703,8 +3703,8 @@ describe('RRule', function () {
       datetime(1998, 4, 11, 0, 0, 0),
       datetime(1998, 4, 11, 0, 0, 1),
       datetime(1998, 4, 11, 0, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByHour',
@@ -3718,8 +3718,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 0, 0),
       datetime(1997, 9, 2, 18, 0, 1),
       datetime(1997, 9, 2, 18, 0, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByMinute',
@@ -3733,8 +3733,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 6, 0),
       datetime(1997, 9, 2, 9, 6, 1),
       datetime(1997, 9, 2, 9, 6, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyBySecond',
@@ -3748,8 +3748,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0, 6),
       datetime(1997, 9, 2, 9, 0, 18),
       datetime(1997, 9, 2, 9, 1, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByHourAndMinute',
@@ -3764,8 +3764,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 6, 0),
       datetime(1997, 9, 2, 18, 6, 1),
       datetime(1997, 9, 2, 18, 6, 2),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByHourAndSecond',
@@ -3780,8 +3780,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 0, 6),
       datetime(1997, 9, 2, 18, 0, 18),
       datetime(1997, 9, 2, 18, 1, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByMinuteAndSecond',
@@ -3796,8 +3796,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 6, 6),
       datetime(1997, 9, 2, 9, 6, 18),
       datetime(1997, 9, 2, 9, 18, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testSecondlyByHourAndMinuteAndSecond',
@@ -3813,8 +3813,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 18, 6, 6),
       datetime(1997, 9, 2, 18, 6, 18),
       datetime(1997, 9, 2, 18, 18, 6),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testUntilNotMatching',
@@ -3828,8 +3828,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 3, 9, 0),
       datetime(1997, 9, 4, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testUntilMatching',
@@ -3843,8 +3843,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 3, 9, 0),
       datetime(1997, 9, 4, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testUntilSingle',
@@ -3854,8 +3854,8 @@ describe('RRule', function () {
       dtstart: parse('19970902T090000'),
       until: parse('19970902T090000'),
     }),
-    [datetime(1997, 9, 2, 9, 0)]
-  )
+    [datetime(1997, 9, 2, 9, 0)],
+  );
 
   testRecurring(
     'testUntilEmpty',
@@ -3865,8 +3865,8 @@ describe('RRule', function () {
       dtstart: parse('19970902T090000'),
       until: parse('19970901T090000'),
     }),
-    []
-  )
+    [],
+  );
 
   testRecurring(
     'testUntilWithDate',
@@ -3880,8 +3880,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 3, 9, 0),
       datetime(1997, 9, 4, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWkStIntervalMO',
@@ -3897,8 +3897,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 7, 9, 0),
       datetime(1997, 9, 16, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testWkStIntervalSU',
@@ -3914,8 +3914,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 14, 9, 0),
       datetime(1997, 9, 16, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDTStartIsDate',
@@ -3924,8 +3924,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 0, 0),
       datetime(1997, 9, 3, 0, 0),
       datetime(1997, 9, 4, 0, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testDTStartWithMicroseconds',
@@ -3938,8 +3938,8 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0),
       datetime(1997, 9, 3, 9, 0),
       datetime(1997, 9, 4, 9, 0),
-    ]
-  )
+    ],
+  );
 
   testRecurring(
     'testMaxYear',
@@ -3950,8 +3950,8 @@ describe('RRule', function () {
       bymonthday: 31,
       dtstart: parse('99970902T090000'),
     }),
-    []
-  )
+    [],
+  );
 
   testRecurring(
     'testSubsecondStartYearly',
@@ -3960,8 +3960,8 @@ describe('RRule', function () {
       count: 1,
       dtstart: new Date(1420063200001),
     }),
-    [new Date(1420063200001)]
-  )
+    [new Date(1420063200001)],
+  );
 
   testRecurring(
     'testSubsecondStartMonthlyByMonthDay',
@@ -3971,30 +3971,30 @@ describe('RRule', function () {
       bysetpos: [-1, 1],
       dtstart: new Date(1356991200001),
     }),
-    [new Date(1356991200001)]
-  )
+    [new Date(1356991200001)],
+  );
 
-  it('testAfterBefore', function () {
-    ;(
+  it('testAfterBefore', () => {
+    (
       ['YEARLY', 'MONTHLY', 'DAILY', 'HOURLY', 'MINUTELY', 'SECONDLY'] as const
-    ).forEach(function (freqStr: keyof typeof Frequency) {
-      const date = new Date(1356991200001)
+    ).forEach((freqStr: keyof typeof Frequency) => {
+      const date = new Date(1356991200001);
       const rr = new RRule({
         freq: RRule[freqStr],
         dtstart: date,
-      })
+      });
 
-      expect(date.getTime()).toBe(rr.options.dtstart.getTime())
-      const res: Date = rr.before(rr.after(rr.options.dtstart))
+      expect(date.getTime()).toBe(rr.options.dtstart.getTime());
+      const res: Date = rr.before(rr.after(rr.options.dtstart));
 
-      let resTimestamp: number
-      if (res != null) resTimestamp = res.getTime()
-      expect(resTimestamp).toBe(rr.options.dtstart.getTime())
-    })
-  })
+      let resTimestamp: number;
+      if (res != null) resTimestamp = res.getTime();
+      expect(resTimestamp).toBe(rr.options.dtstart.getTime());
+    });
+  });
 
-  it('testConvertAndBack', function () {
-    ;[6, RRule.SU].forEach(function (wkst) {
+  it('testConvertAndBack', () => {
+    [6, RRule.SU].forEach((wkst) => {
       const rr = new RRule({
         dtstart: datetime(2017, 10, 17, 0, 30, 0),
         until: datetime(2017, 12, 22, 1, 30, 0),
@@ -4014,19 +4014,19 @@ describe('RRule', function () {
         byhour: 11,
         byminute: 0,
         bysecond: 0,
-      })
+      });
 
-      const rrstr = rr.toString()
+      const rrstr = rr.toString();
       expect(rrstr).toBe(
-        'DTSTART:20171017T003000Z\nRRULE:UNTIL=20171222T013000Z;FREQ=MONTHLY;INTERVAL=1;BYSETPOS=17;BYDAY=SU,MO,TU,WE,TH,FR,SA;WKST=SU;BYHOUR=11;BYMINUTE=0;BYSECOND=0'
-      )
-      const newrr = RRule.fromString(rrstr)
-      expect(rrstr).toBe(newrr.toString())
-    })
-  })
+        'DTSTART:20171017T003000Z\nRRULE:UNTIL=20171222T013000Z;FREQ=MONTHLY;INTERVAL=1;BYSETPOS=17;BYDAY=SU,MO,TU,WE,TH,FR,SA;WKST=SU;BYHOUR=11;BYMINUTE=0;BYSECOND=0',
+      );
+      const newrr = RRule.fromString(rrstr);
+      expect(rrstr).toBe(newrr.toString());
+    });
+  });
 
-  it('testByHourValues', function () {
-    ;[
+  it('testByHourValues', () => {
+    [
       [
         'DTSTART:20171101T010000Z\nRRULE:UNTIL=20171214T013000Z;FREQ=DAILY;INTERVAL=2;WKST=MO;BYHOUR=11,12;BYMINUTE=30;BYSECOND=0',
         'every 2 days at 11 and 12 until December 13, 2017',
@@ -4035,18 +4035,18 @@ describe('RRule', function () {
         'DTSTART:20171101T010000Z\nRRULE:UNTIL=20171214T013000Z;FREQ=DAILY;INTERVAL=2;WKST=MO;BYHOUR=11;BYMINUTE=30;BYSECOND=0',
         'every 2 days at 11 until December 13, 2017',
       ],
-    ].forEach(function (pair) {
-      const rule = pair[0]
-      const rr = RRule.fromString(rule)
-      expect(rr.toText()).toBeTruthy()
+    ].forEach((pair) => {
+      const rule = pair[0];
+      const rr = RRule.fromString(rule);
+      expect(rr.toText()).toBeTruthy();
       // assert.equal(rr.toText(), pair[1]) -- can't test this because it reports in local time which varies by machine
-    })
-  })
+    });
+  });
 
   it('calculates daily recurrences correctly across DST boundaries', () => {
     const rrule = RRule.fromString(
-      'DTSTART=20181101T110000Z;UNTIL=20181106T110000Z;FREQ=DAILY'
-    )
+      'DTSTART=20181101T110000Z;UNTIL=20181106T110000Z;FREQ=DAILY',
+    );
     expect(rrule.all()).toEqual([
       new Date('2018-11-01T11:00:00.000Z'),
       new Date('2018-11-02T11:00:00.000Z'),
@@ -4054,19 +4054,19 @@ describe('RRule', function () {
       new Date('2018-11-04T11:00:00.000Z'),
       new Date('2018-11-05T11:00:00.000Z'),
       new Date('2018-11-06T11:00:00.000Z'),
-    ])
-  })
+    ]);
+  });
 
   it('calculates weekly recurrences correctly across DST boundaries', () => {
     const rrule = RRule.fromString(
-      'DTSTART=20181031T180000Z\nRRULE:FREQ=WEEKLY;UNTIL=20181115T050000Z'
-    )
+      'DTSTART=20181031T180000Z\nRRULE:FREQ=WEEKLY;UNTIL=20181115T050000Z',
+    );
     expect(rrule.all()).toEqual([
       new Date('2018-10-31T18:00:00.000Z'),
       new Date('2018-11-07T18:00:00.000Z'),
       new Date('2018-11-14T18:00:00.000Z'),
-    ])
-  })
+    ]);
+  });
 
   it('calculates byweekday recurrences correctly across DST boundaries', () => {
     const rule = new RRule({
@@ -4075,25 +4075,25 @@ describe('RRule', function () {
       interval: 1,
       byweekday: [RRule.SU, RRule.WE],
       until: datetime(2018, 10, 9, 0, 0, 0),
-    })
+    });
 
     expect(rule.all()).toEqual([
       new Date('2018-09-30T00:00:00.000Z'),
       new Date('2018-10-03T00:00:00.000Z'),
       new Date('2018-10-07T00:00:00.000Z'),
-    ])
-  })
+    ]);
+  });
 
   it('generates weekly events (#247)', () => {
-    const startEvent = 1533895200000
-    const endSearch = 1543618799999
+    const startEvent = 1533895200000;
+    const endSearch = 1543618799999;
 
     const rrule = new RRule({
       freq: RRule.WEEKLY,
       interval: 1,
       dtstart: new Date(startEvent),
       until: new Date(endSearch),
-    })
+    });
 
     expect(rrule.all()).toEqual([
       new Date('2018-08-10T10:00:00.000Z'),
@@ -4113,137 +4113,137 @@ describe('RRule', function () {
       new Date('2018-11-16T10:00:00.000Z'),
       new Date('2018-11-23T10:00:00.000Z'),
       new Date('2018-11-30T10:00:00.000Z'),
-    ])
-  })
+    ]);
+  });
 
   it('generates monthly (#233)', () => {
-    const start = new Date(Date.parse('Mon Aug 06 2018 10:30:00 GMT+0530'))
-    const end = new Date(Date.parse('Mon Oct 08 2018 11:00:00 GMT+0530'))
+    const start = new Date(Date.parse('Mon Aug 06 2018 10:30:00 GMT+0530'));
+    const end = new Date(Date.parse('Mon Oct 08 2018 11:00:00 GMT+0530'));
 
     const rrule = new RRule({
       freq: RRule.MONTHLY,
       interval: 1,
       dtstart: start,
       until: end,
-    })
+    });
 
     expect(rrule.all()).toEqual([
       new Date('2018-08-06T05:00:00.000Z'),
       new Date('2018-09-06T05:00:00.000Z'),
       new Date('2018-10-06T05:00:00.000Z'),
-    ])
-  })
+    ]);
+  });
 
   it('generates around dst (#249)', () => {
     const ruleString =
-      'DTSTART:20181101T120000Z\nRRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,WE,FR;COUNT=4;WKST=SU'
-    const rrule = RRule.fromString(ruleString)
+      'DTSTART:20181101T120000Z\nRRULE:FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,WE,FR;COUNT=4;WKST=SU';
+    const rrule = RRule.fromString(ruleString);
 
     expect(rrule.all()).toEqual([
       new Date('2018-11-02T12:00:00.000Z'),
       new Date('2018-11-05T12:00:00.000Z'),
       new Date('2018-11-07T12:00:00.000Z'),
       new Date('2018-11-09T12:00:00.000Z'),
-    ])
-  })
+    ]);
+  });
 
   it('handles 3-digit years properly (#202)', () => {
     const rrule = new RRule({
       count: 1,
       dtstart: datetime(990, 1, 1, 0, 0, 0),
-    })
-    const ruleString = rrule.toString()
-    const rrule2 = RRule.fromString(ruleString)
+    });
+    const ruleString = rrule.toString();
+    const rrule2 = RRule.fromString(ruleString);
 
-    expect(ruleString).toBe('DTSTART:09900101T000000Z\nRRULE:COUNT=1')
-    expect(rrule2.count()).toBe(1)
-    expect(rrule2.all()).toEqual([datetime(990, 1, 1, 0, 0, 0)])
-  })
+    expect(ruleString).toBe('DTSTART:09900101T000000Z\nRRULE:COUNT=1');
+    expect(rrule2.count()).toBe(1);
+    expect(rrule2.all()).toEqual([datetime(990, 1, 1, 0, 0, 0)]);
+  });
 
   describe('time zones, when recurrence is in dst', () => {
-    const targetZone = 'America/Los_Angeles'
-    const startDate = datetime(2013, 8, 6, 11, 0, 0)
-    const dtstart = startDate
+    const targetZone = 'America/Los_Angeles';
+    const startDate = datetime(2013, 8, 6, 11, 0, 0);
+    const dtstart = startDate;
 
     it('generates correct recurrences when current time is standard time', () => {
-      const currentLocalDate = new Date(2013, 1, 6, 11, 0, 0)
-      setMockDate(currentLocalDate)
+      const currentLocalDate = new Date(2013, 1, 6, 11, 0, 0);
+      setMockDate(currentLocalDate);
 
       const rule = new RRule({
         dtstart,
         count: 1,
         tzid: targetZone,
-      })
-      const recurrence = rule.all()[0]
-      const expected = expectedDate(startDate, currentLocalDate, targetZone)
+      });
+      const recurrence = rule.all()[0];
+      const expected = expectedDate(startDate, currentLocalDate, targetZone);
 
-      expect(recurrence).toEqual(expected)
+      expect(recurrence).toEqual(expected);
 
-      resetMockDate()
-    })
+      resetMockDate();
+    });
 
     it('generates correct recurrences when current time is dst', () => {
-      const currentLocalDate = new Date(2013, 7, 6, 11, 0, 0)
-      setMockDate(currentLocalDate)
+      const currentLocalDate = new Date(2013, 7, 6, 11, 0, 0);
+      setMockDate(currentLocalDate);
 
       const rule = new RRule({
         dtstart,
         count: 1,
         tzid: targetZone,
-      })
-      const recurrence = rule.all()[0]
-      const expected = expectedDate(startDate, currentLocalDate, targetZone)
+      });
+      const recurrence = rule.all()[0];
+      const expected = expectedDate(startDate, currentLocalDate, targetZone);
 
-      expect(recurrence).toEqual(expected)
+      expect(recurrence).toEqual(expected);
 
-      resetMockDate()
-    })
+      resetMockDate();
+    });
 
     it('generates correct recurrences using after and current time is standard time', () => {
-      const currentLocalDate = new Date(2013, 1, 6, 11, 0, 0)
-      setMockDate(currentLocalDate)
+      const currentLocalDate = new Date(2013, 1, 6, 11, 0, 0);
+      setMockDate(currentLocalDate);
 
       const rule = new RRule({
         dtstart,
         count: 1,
         tzid: targetZone,
-      })
-      const recurrence = rule.after(new Date(0))
-      const expected = expectedDate(startDate, currentLocalDate, targetZone)
+      });
+      const recurrence = rule.after(new Date(0));
+      const expected = expectedDate(startDate, currentLocalDate, targetZone);
 
-      expect(recurrence).toEqual(expected)
+      expect(recurrence).toEqual(expected);
 
-      resetMockDate()
-    })
-  })
+      resetMockDate();
+    });
+  });
 
   it('throws an error when dtstart is invalid', () => {
-    const invalidDate = new Date(undefined)
-    const validDate = datetime(2017, 1, 1)
+    const invalidDate = new Date(undefined);
+    const validDate = datetime(2017, 1, 1);
     expect(() => new RRule({ dtstart: invalidDate })).toThrow(
-      'Invalid options: dtstart'
-    )
+      'Invalid options: dtstart',
+    );
     expect(() => new RRule({ dtstart: validDate, until: invalidDate })).toThrow(
-      'Invalid options: until'
-    )
+      'Invalid options: until',
+    );
 
     const rule = new RRule({
       dtstart: datetime(2017, 1, 1),
       freq: Frequency.DAILY,
       interval: 1,
-    })
+    });
 
     expect(() => rule.after(invalidDate)).toThrow(
-      'Invalid date passed in to RRule.after'
-    )
+      'Invalid date passed in to RRule.after',
+    );
     expect(() => rule.before(invalidDate)).toThrow(
-      'Invalid date passed in to RRule.before'
-    )
+      'Invalid date passed in to RRule.before',
+    );
     expect(() => rule.between(invalidDate, validDate)).toThrow(
-      'Invalid date passed in to RRule.between'
-    )
+      'Invalid date passed in to RRule.between',
+    );
     expect(() => rule.between(validDate, invalidDate)).toThrow(
-      'Invalid date passed in to RRule.between'
-    )
-  })
-})
+      'Invalid date passed in to RRule.between',
+    );
+  });
+});

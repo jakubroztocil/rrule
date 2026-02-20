@@ -1,24 +1,23 @@
-import { isValidDate } from './dateutil'
-
-import IterResult, { IterArgs } from './iterresult'
-import CallbackIterResult from './callbackiterresult'
-import { Language } from './nlp/i18n'
-import { fromText, parseText, toText, isFullyConvertible } from './nlp/index'
-import { DateFormatter, GetText } from './nlp/totext'
+import { Cache, type CacheKeys } from './cache';
+import CallbackIterResult from './callbackiterresult';
+import { isValidDate } from './dateutil';
+import { iter } from './iter/index';
+import IterResult, { type IterArgs } from './iterresult';
+import type { Language } from './nlp/i18n';
+import { fromText, isFullyConvertible, parseText, toText } from './nlp/index';
+import type { DateFormatter, GetText } from './nlp/totext';
+import { optionsToString } from './optionstostring';
+import { initializeOptions, parseOptions } from './parseoptions';
+import { parseString } from './parsestring';
 import {
-  ParsedOptions,
-  Options,
   Frequency,
-  QueryMethods,
-  QueryMethodTypes,
-  IterResultType,
-} from './types'
-import { parseOptions, initializeOptions } from './parseoptions'
-import { parseString } from './parsestring'
-import { optionsToString } from './optionstostring'
-import { Cache, CacheKeys } from './cache'
-import { Weekday } from './weekday'
-import { iter } from './iter/index'
+  type IterResultType,
+  type Options,
+  type ParsedOptions,
+  type QueryMethods,
+  type QueryMethodTypes,
+} from './types';
+import { Weekday } from './weekday';
 
 // =============================================================================
 // RRule
@@ -32,7 +31,7 @@ export const Days = {
   FR: new Weekday(4),
   SA: new Weekday(5),
   SU: new Weekday(6),
-}
+};
 
 export const DEFAULT_OPTIONS: Options = {
   freq: Frequency.YEARLY,
@@ -54,9 +53,9 @@ export const DEFAULT_OPTIONS: Options = {
   byminute: null,
   bysecond: null,
   byeaster: null,
-}
+};
 
-export const defaultKeys = Object.keys(DEFAULT_OPTIONS) as (keyof Options)[]
+export const defaultKeys = Object.keys(DEFAULT_OPTIONS) as (keyof Options)[];
 
 /**
  *
@@ -65,9 +64,9 @@ export const defaultKeys = Object.keys(DEFAULT_OPTIONS) as (keyof Options)[]
  * @constructor
  */
 export class RRule implements QueryMethods {
-  public _cache: Cache | null
-  public origOptions: Partial<Options>
-  public options: ParsedOptions
+  public _cache: Cache | null;
+  public origOptions: Partial<Options>;
+  public options: ParsedOptions;
 
   // RRule class 'constants'
 
@@ -79,68 +78,68 @@ export class RRule implements QueryMethods {
     'HOURLY',
     'MINUTELY',
     'SECONDLY',
-  ]
+  ];
 
-  static readonly YEARLY = Frequency.YEARLY
-  static readonly MONTHLY = Frequency.MONTHLY
-  static readonly WEEKLY = Frequency.WEEKLY
-  static readonly DAILY = Frequency.DAILY
-  static readonly HOURLY = Frequency.HOURLY
-  static readonly MINUTELY = Frequency.MINUTELY
-  static readonly SECONDLY = Frequency.SECONDLY
+  static readonly YEARLY = Frequency.YEARLY;
+  static readonly MONTHLY = Frequency.MONTHLY;
+  static readonly WEEKLY = Frequency.WEEKLY;
+  static readonly DAILY = Frequency.DAILY;
+  static readonly HOURLY = Frequency.HOURLY;
+  static readonly MINUTELY = Frequency.MINUTELY;
+  static readonly SECONDLY = Frequency.SECONDLY;
 
-  static readonly MO = Days.MO
-  static readonly TU = Days.TU
-  static readonly WE = Days.WE
-  static readonly TH = Days.TH
-  static readonly FR = Days.FR
-  static readonly SA = Days.SA
-  static readonly SU = Days.SU
+  static readonly MO = Days.MO;
+  static readonly TU = Days.TU;
+  static readonly WE = Days.WE;
+  static readonly TH = Days.TH;
+  static readonly FR = Days.FR;
+  static readonly SA = Days.SA;
+  static readonly SU = Days.SU;
 
   constructor(options: Partial<Options> = {}, noCache = false) {
     // RFC string
-    this._cache = noCache ? null : new Cache()
+    this._cache = noCache ? null : new Cache();
 
     // used by toString()
-    this.origOptions = initializeOptions(options)
-    const { parsedOptions } = parseOptions(options)
-    this.options = parsedOptions
+    this.origOptions = initializeOptions(options);
+    const { parsedOptions } = parseOptions(options);
+    this.options = parsedOptions;
   }
 
   static parseText(text: string, language?: Language) {
-    return parseText(text, language)
+    return parseText(text, language);
   }
 
   static fromText(text: string, language?: Language) {
-    return fromText(text, language)
+    return fromText(text, language);
   }
 
-  static parseString = parseString
+  static parseString = parseString;
 
   static fromString(str: string) {
-    return new RRule(RRule.parseString(str) || undefined)
+    return new RRule(RRule.parseString(str) || undefined);
   }
 
-  static optionsToString = optionsToString
+  static optionsToString = optionsToString;
 
   protected _iter<M extends QueryMethodTypes>(
-    iterResult: IterResult<M>
+    iterResult: IterResult<M>,
   ): IterResultType<M> {
-    return iter(iterResult, this.options)
+    return iter(iterResult, this.options);
   }
 
   private _cacheGet(what: CacheKeys | 'all', args?: Partial<IterArgs>) {
-    if (!this._cache) return false
-    return this._cache._cacheGet(what, args)
+    if (!this._cache) return false;
+    return this._cache._cacheGet(what, args);
   }
 
   public _cacheAdd(
     what: CacheKeys | 'all',
     value: Date[] | Date | null,
-    args?: Partial<IterArgs>
+    args?: Partial<IterArgs>,
   ) {
-    if (!this._cache) return
-    return this._cache._cacheAdd(what, value, args)
+    if (!this._cache) return;
+    return this._cache._cacheAdd(what, value, args);
   }
 
   /**
@@ -151,15 +150,15 @@ export class RRule implements QueryMethods {
    */
   all(iterator?: (d: Date, len: number) => boolean): Date[] {
     if (iterator) {
-      return this._iter(new CallbackIterResult('all', {}, iterator))
+      return this._iter(new CallbackIterResult('all', {}, iterator));
     }
 
-    let result = this._cacheGet('all') as Date[] | false
+    let result = this._cacheGet('all') as Date[] | false;
     if (result === false) {
-      result = this._iter(new IterResult('all', {}))
-      this._cacheAdd('all', result)
+      result = this._iter(new IterResult('all', {}));
+      this._cacheAdd('all', result);
     }
-    return result
+    return result;
   }
 
   /**
@@ -174,27 +173,27 @@ export class RRule implements QueryMethods {
     after: Date,
     before: Date,
     inc = false,
-    iterator?: (d: Date, len: number) => boolean
+    iterator?: (d: Date, len: number) => boolean,
   ): Date[] {
     if (!isValidDate(after) || !isValidDate(before)) {
-      throw new Error('Invalid date passed in to RRule.between')
+      throw new Error('Invalid date passed in to RRule.between');
     }
     const args = {
       before,
       after,
       inc,
-    }
+    };
 
     if (iterator) {
-      return this._iter(new CallbackIterResult('between', args, iterator))
+      return this._iter(new CallbackIterResult('between', args, iterator));
     }
 
-    let result = this._cacheGet('between', args)
+    let result = this._cacheGet('between', args);
     if (result === false) {
-      result = this._iter(new IterResult('between', args))
-      this._cacheAdd('between', result, args)
+      result = this._iter(new IterResult('between', args));
+      this._cacheAdd('between', result, args);
     }
-    return result as Date[]
+    return result as Date[];
   }
 
   /**
@@ -206,15 +205,15 @@ export class RRule implements QueryMethods {
    */
   before(dt: Date, inc = false): Date | null {
     if (!isValidDate(dt)) {
-      throw new Error('Invalid date passed in to RRule.before')
+      throw new Error('Invalid date passed in to RRule.before');
     }
-    const args = { dt: dt, inc: inc }
-    let result = this._cacheGet('before', args)
+    const args = { dt: dt, inc: inc };
+    let result = this._cacheGet('before', args);
     if (result === false) {
-      result = this._iter(new IterResult('before', args))
-      this._cacheAdd('before', result, args)
+      result = this._iter(new IterResult('before', args));
+      this._cacheAdd('before', result, args);
     }
-    return result as Date | null
+    return result as Date | null;
   }
 
   /**
@@ -226,15 +225,15 @@ export class RRule implements QueryMethods {
    */
   after(dt: Date, inc = false): Date | null {
     if (!isValidDate(dt)) {
-      throw new Error('Invalid date passed in to RRule.after')
+      throw new Error('Invalid date passed in to RRule.after');
     }
-    const args = { dt: dt, inc: inc }
-    let result = this._cacheGet('after', args)
+    const args = { dt: dt, inc: inc };
+    let result = this._cacheGet('after', args);
     if (result === false) {
-      result = this._iter(new IterResult('after', args))
-      this._cacheAdd('after', result, args)
+      result = this._iter(new IterResult('after', args));
+      this._cacheAdd('after', result, args);
     }
-    return result as Date | null
+    return result as Date | null;
   }
 
   /**
@@ -242,7 +241,7 @@ export class RRule implements QueryMethods {
    * the whole recurrence, if this hasn't been done before.
    */
   count(): number {
-    return this.all().length
+    return this.all().length;
   }
 
   /**
@@ -252,7 +251,7 @@ export class RRule implements QueryMethods {
    * @return String
    */
   toString() {
-    return optionsToString(this.origOptions)
+    return optionsToString(this.origOptions);
   }
 
   /**
@@ -262,13 +261,13 @@ export class RRule implements QueryMethods {
   toText(
     gettext?: GetText,
     language?: Language,
-    dateFormatter?: DateFormatter
+    dateFormatter?: DateFormatter,
   ) {
-    return toText(this, gettext, language, dateFormatter)
+    return toText(this, gettext, language, dateFormatter);
   }
 
   isFullyConvertibleToText() {
-    return isFullyConvertible(this)
+    return isFullyConvertible(this);
   }
 
   /**
@@ -276,6 +275,6 @@ export class RRule implements QueryMethods {
    * as this one (cache is not cloned)
    */
   clone(): RRule {
-    return new RRule(this.origOptions)
+    return new RRule(this.origOptions);
   }
 }

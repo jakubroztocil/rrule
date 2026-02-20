@@ -1,37 +1,37 @@
-import { Options } from './types'
-import { RRule, DEFAULT_OPTIONS } from './rrule'
-import { includes, isPresent, isArray, isNumber, toArray } from './helpers'
-import { Weekday } from './weekday'
-import { timeToUntilString } from './dateutil'
-import { DateWithZone } from './datewithzone'
+import { timeToUntilString } from './dateutil';
+import { DateWithZone } from './datewithzone';
+import { isArray, isNumber, isPresent, toArray } from './helpers';
+import { DEFAULT_OPTIONS, RRule } from './rrule';
+import type { Options } from './types';
+import { Weekday } from './weekday';
 
 export function optionsToString(options: Partial<Options>) {
-  const rrule: string[][] = []
-  let dtstart = ''
-  const keys: (keyof Options)[] = Object.keys(options) as (keyof Options)[]
-  const defaultKeys = Object.keys(DEFAULT_OPTIONS)
+  const rrule: string[][] = [];
+  let dtstart = '';
+  const keys: (keyof Options)[] = Object.keys(options) as (keyof Options)[];
+  const defaultKeys = Object.keys(DEFAULT_OPTIONS);
 
   for (let i = 0; i < keys.length; i++) {
-    if (keys[i] === 'tzid') continue
-    if (!includes(defaultKeys, keys[i])) continue
+    if (keys[i]! === 'tzid') continue;
+    if (!defaultKeys.includes(keys[i]!)) continue;
 
-    let key = keys[i].toUpperCase()
-    const value = options[keys[i]]
-    let outValue = ''
+    let key = keys[i]!.toUpperCase();
+    const value = options[keys[i]!];
+    let outValue = '';
 
-    if (!isPresent(value) || (isArray(value) && !value.length)) continue
+    if (!isPresent(value) || (isArray(value) && !value.length)) continue;
 
     switch (key) {
       case 'FREQ':
-        outValue = RRule.FREQUENCIES[options.freq]
-        break
+        outValue = RRule.FREQUENCIES[options.freq!]!;
+        break;
       case 'WKST':
         if (isNumber(value)) {
-          outValue = new Weekday(value).toString()
+          outValue = new Weekday(value).toString();
         } else {
-          outValue = value.toString()
+          outValue = value.toString();
         }
-        break
+        break;
       case 'BYWEEKDAY':
         /*
           NOTE: BYWEEKDAY is a special case.
@@ -44,64 +44,64 @@ export function optionsToString(options: Partial<Options>) {
           Also, BYWEEKDAY (used by RRule) vs. BYDAY (RFC)
 
           */
-        key = 'BYDAY'
+        key = 'BYDAY';
         outValue = toArray<Weekday | number[] | number>(
-          value as Weekday | number[] | number
+          value as Weekday | number[] | number,
         )
           .map((wday) => {
             if (wday instanceof Weekday) {
-              return wday
+              return wday;
             }
 
             if (isArray(wday)) {
-              return new Weekday(wday[0], wday[1])
+              return new Weekday(wday[0]!, wday[1]!);
             }
 
-            return new Weekday(wday)
+            return new Weekday(wday);
           })
-          .toString()
+          .toString();
 
-        break
+        break;
       case 'DTSTART':
-        dtstart = buildDtstart(value as number, options.tzid)
-        break
+        dtstart = buildDtstart(value as number, options.tzid);
+        break;
 
       case 'UNTIL':
-        outValue = timeToUntilString(value as number, !options.tzid)
-        break
+        outValue = timeToUntilString(value as number, !options.tzid);
+        break;
 
       default:
         if (isArray(value)) {
-          const strValues: string[] = []
+          const strValues: string[] = [];
           for (let j = 0; j < value.length; j++) {
-            strValues[j] = String(value[j])
+            strValues[j] = String(value[j]);
           }
-          outValue = strValues.toString()
+          outValue = strValues.toString();
         } else {
-          outValue = String(value)
+          outValue = String(value);
         }
     }
 
     if (outValue) {
-      rrule.push([key, outValue])
+      rrule.push([key, outValue]);
     }
   }
 
   const rules = rrule
-    .map(([key, value]) => `${key}=${value.toString()}`)
-    .join(';')
-  let ruleString = ''
+    .map(([key, value]) => `${key}=${value!.toString()}`)
+    .join(';');
+  let ruleString = '';
   if (rules !== '') {
-    ruleString = `RRULE:${rules}`
+    ruleString = `RRULE:${rules}`;
   }
 
-  return [dtstart, ruleString].filter((x) => !!x).join('\n')
+  return [dtstart, ruleString].filter((x) => !!x).join('\n');
 }
 
 function buildDtstart(dtstart?: number, tzid?: string | null) {
   if (!dtstart) {
-    return ''
+    return '';
   }
 
-  return 'DTSTART' + new DateWithZone(new Date(dtstart), tzid).toString()
+  return `DTSTART${new DateWithZone(new Date(dtstart), tzid).toString()}`;
 }

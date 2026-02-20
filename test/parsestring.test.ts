@@ -1,10 +1,10 @@
-import { RRule } from '../src/rrule'
-import { parseString } from '../src/parsestring'
-import { Options, Frequency } from '../src/types'
-import { datetime } from './lib/utils'
+import { parseString } from '../src/parsestring';
+import { RRule } from '../src/rrule';
+import { Frequency, type Options } from '../src/types';
+import { datetime } from './lib/utils';
 
 describe('parseString', () => {
-  it('parses valid single lines of rrules', function () {
+  it('parses valid single lines of rrules', () => {
     const expectations: [string, Partial<Options>][] = [
       [
         'FREQ=WEEKLY;UNTIL=20100101T000000Z',
@@ -30,15 +30,15 @@ describe('parseString', () => {
           tzid: 'America/New_York',
         },
       ],
-    ]
+    ];
 
-    expectations.forEach(function (item) {
-      const s = item[0]
-      const s2 = item[1]
+    expectations.forEach((item) => {
+      const s = item[0];
+      const s2 = item[1];
       // s
-      expect(parseString(s)).toEqual(s2)
-    })
-  })
+      expect(parseString(s)).toEqual(s2);
+    });
+  });
 
   it('parses multiline rules', () => {
     const expectations: [string, Partial<Options>][] = [
@@ -59,15 +59,15 @@ describe('parseString', () => {
           count: 3,
         },
       ],
-    ]
+    ];
 
-    expectations.forEach(function (item) {
-      const s = item[0]
-      const s2 = item[1]
+    expectations.forEach((item) => {
+      const s = item[0];
+      const s2 = item[1];
       // s
-      expect(parseString(s)).toEqual(s2)
-    })
-  })
+      expect(parseString(s)).toEqual(s2);
+    });
+  });
 
   it('parses legacy dtstart in rrule', () => {
     const expectations: [string, Partial<Options>][] = [
@@ -79,13 +79,13 @@ describe('parseString', () => {
           tzid: 'America/New_York',
         },
       ],
-    ]
+    ];
 
-    expectations.forEach(function (item) {
-      const s = item[0]
-      const s2 = item[1]
+    expectations.forEach((item) => {
+      const s = item[0];
+      const s2 = item[1];
       // s
-      expect(parseString(s)).toEqual(s2)
-    })
-  })
-})
+      expect(parseString(s)).toEqual(s2);
+    });
+  });
+});

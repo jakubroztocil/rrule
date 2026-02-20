@@ -1,39 +1,19 @@
-import { RRule } from './rrule'
-import { sort, timeToUntilString } from './dateutil'
-import { includes } from './helpers'
-import IterResult from './iterresult'
-import { iterSet } from './iterset'
-import { QueryMethodTypes, IterResultType } from './types'
-import { rrulestr } from './rrulestr'
-import { optionsToString } from './optionstostring'
-
-function createGetterSetter<T>(fieldName: string) {
-  return (field?: T) => {
-    if (field !== undefined) {
-      this[`_${fieldName}`] = field
-    }
-
-    if (this[`_${fieldName}`] !== undefined) {
-      return this[`_${fieldName}`]
-    }
-
-    for (let i = 0; i < this._rrule.length; i++) {
-      const field: T = this._rrule[i].origOptions[fieldName]
-      if (field) {
-        return field
-      }
-    }
-  }
-}
+import { sort, timeToUntilString } from './dateutil';
+import type IterResult from './iterresult';
+import { iterSet } from './iterset';
+import { optionsToString } from './optionstostring';
+import { RRule } from './rrule';
+import { rrulestr } from './rrulestr';
+import type { IterResultType, QueryMethodTypes } from './types';
 
 export class RRuleSet extends RRule {
-  public readonly _rrule: RRule[]
-  public readonly _rdate: Date[]
-  public readonly _exrule: RRule[]
-  public readonly _exdate: Date[]
+  public readonly _rrule: RRule[];
+  public readonly _rdate: Date[];
+  public readonly _exrule: RRule[];
+  public readonly _exdate: Date[];
 
-  private _dtstart?: Date | null | undefined
-  private _tzid?: string
+  private _dtstart?: Date | null;
+  private _tzid?: string;
 
   /**
    *
@@ -42,19 +22,42 @@ export class RRuleSet extends RRule {
    * @constructor
    */
   constructor(noCache = false) {
-    super({}, noCache)
+    super({}, noCache);
 
-    this._rrule = []
-    this._rdate = []
-    this._exrule = []
-    this._exdate = []
+    this._rrule = [];
+    this._rdate = [];
+    this._exrule = [];
+    this._exdate = [];
   }
 
-  dtstart = createGetterSetter.apply(this, ['dtstart'])
-  tzid = createGetterSetter.apply(this, ['tzid'])
+  dtstart(value?: Date | null): Date | null | undefined {
+    if (value !== undefined) {
+      this._dtstart = value;
+    }
+    if (this._dtstart !== undefined) {
+      return this._dtstart;
+    }
+    for (const rule of this._rrule) {
+      if (rule.origOptions.dtstart) return rule.origOptions.dtstart;
+    }
+    return undefined;
+  }
+
+  tzid(value?: string): string | undefined {
+    if (value !== undefined) {
+      this._tzid = value;
+    }
+    if (this._tzid !== undefined) {
+      return this._tzid;
+    }
+    for (const rule of this._rrule) {
+      if (rule.origOptions.tzid) return rule.origOptions.tzid;
+    }
+    return undefined;
+  }
 
   _iter<M extends QueryMethodTypes>(
-    iterResult: IterResult<M>
+    iterResult: IterResult<M>,
   ): IterResultType<M> {
     return iterSet(
       iterResult,
@@ -62,8 +65,8 @@ export class RRuleSet extends RRule {
       this._exrule,
       this._rdate,
       this._exdate,
-      this.tzid()
-    )
+      this.tzid(),
+    );
   }
 
   /**
@@ -72,7 +75,7 @@ export class RRuleSet extends RRule {
    * @param {RRule}
    */
   rrule(rrule: RRule) {
-    _addRule(rrule, this._rrule)
+    _addRule(rrule, this._rrule);
   }
 
   /**
@@ -81,7 +84,7 @@ export class RRuleSet extends RRule {
    * @param {RRule}
    */
   exrule(rrule: RRule) {
-    _addRule(rrule, this._exrule)
+    _addRule(rrule, this._exrule);
   }
 
   /**
@@ -90,7 +93,7 @@ export class RRuleSet extends RRule {
    * @param {Date}
    */
   rdate(date: Date) {
-    _addDate(date, this._rdate)
+    _addDate(date, this._rdate);
   }
 
   /**
@@ -99,7 +102,7 @@ export class RRuleSet extends RRule {
    * @param {Date}
    */
   exdate(date: Date) {
-    _addDate(date, this._exdate)
+    _addDate(date, this._exdate);
   }
 
   /**
@@ -108,7 +111,7 @@ export class RRuleSet extends RRule {
    * @return List of rrules
    */
   rrules() {
-    return this._rrule.map((e) => rrulestr(e.toString()))
+    return this._rrule.map((e) => rrulestr(e.toString()));
   }
 
   /**
@@ -117,7 +120,7 @@ export class RRuleSet extends RRule {
    * @return List of exrules
    */
   exrules() {
-    return this._exrule.map((e) => rrulestr(e.toString()))
+    return this._exrule.map((e) => rrulestr(e.toString()));
   }
 
   /**
@@ -126,7 +129,7 @@ export class RRuleSet extends RRule {
    * @return List of rdates
    */
   rdates() {
-    return this._rdate.map((e) => new Date(e.getTime()))
+    return this._rdate.map((e) => new Date(e.getTime()));
   }
 
   /**
@@ -135,39 +138,39 @@ export class RRuleSet extends RRule {
    * @return List of exdates
    */
   exdates() {
-    return this._exdate.map((e) => new Date(e.getTime()))
+    return this._exdate.map((e) => new Date(e.getTime()));
   }
 
   valueOf() {
-    let result: string[] = []
+    let result: string[] = [];
 
     if (!this._rrule.length && this._dtstart) {
-      result = result.concat(optionsToString({ dtstart: this._dtstart }))
+      result = result.concat(optionsToString({ dtstart: this._dtstart }));
     }
 
-    this._rrule.forEach(function (rrule) {
-      result = result.concat(rrule.toString().split('\n'))
-    })
+    this._rrule.forEach((rrule) => {
+      result = result.concat(rrule.toString().split('\n'));
+    });
 
-    this._exrule.forEach(function (exrule) {
+    this._exrule.forEach((exrule) => {
       result = result.concat(
         exrule
           .toString()
           .split('\n')
           .map((line) => line.replace(/^RRULE:/, 'EXRULE:'))
-          .filter((line) => !/^DTSTART/.test(line))
-      )
-    })
+          .filter((line) => !/^DTSTART/.test(line)),
+      );
+    });
 
     if (this._rdate.length) {
-      result.push(rdatesToString('RDATE', this._rdate, this.tzid()))
+      result.push(rdatesToString('RDATE', this._rdate, this.tzid()));
     }
 
     if (this._exdate.length) {
-      result.push(rdatesToString('EXDATE', this._exdate, this.tzid()))
+      result.push(rdatesToString('EXDATE', this._exdate, this.tzid()));
     }
 
-    return result
+    return result;
   }
 
   /**
@@ -177,55 +180,55 @@ export class RRuleSet extends RRule {
    * RRULE:FREQ=YEARLY;COUNT=1;BYDAY=TH
    */
   toString() {
-    return this.valueOf().join('\n')
+    return this.valueOf().join('\n');
   }
 
   /**
    * Create a new RRuleSet Object completely base on current instance
    */
   clone(): RRuleSet {
-    const rrs = new RRuleSet(!!this._cache)
+    const rrs = new RRuleSet(!!this._cache);
 
-    this._rrule.forEach((rule) => rrs.rrule(rule.clone()))
-    this._exrule.forEach((rule) => rrs.exrule(rule.clone()))
-    this._rdate.forEach((date) => rrs.rdate(new Date(date.getTime())))
-    this._exdate.forEach((date) => rrs.exdate(new Date(date.getTime())))
+    for (const rule of this._rrule) rrs.rrule(rule.clone());
+    for (const rule of this._exrule) rrs.exrule(rule.clone());
+    for (const date of this._rdate) rrs.rdate(new Date(date.getTime()));
+    for (const date of this._exdate) rrs.exdate(new Date(date.getTime()));
 
-    return rrs
+    return rrs;
   }
 }
 
 function _addRule(rrule: RRule, collection: RRule[]) {
   if (!(rrule instanceof RRule)) {
-    throw new TypeError(String(rrule) + ' is not RRule instance')
+    throw new TypeError(`${String(rrule)} is not RRule instance`);
   }
 
-  if (!includes(collection.map(String), String(rrule))) {
-    collection.push(rrule)
+  if (!collection.map(String).includes(String(rrule))) {
+    collection.push(rrule);
   }
 }
 
 function _addDate(date: Date, collection: Date[]) {
   if (!(date instanceof Date)) {
-    throw new TypeError(String(date) + ' is not Date instance')
+    throw new TypeError(`${String(date)} is not Date instance`);
   }
-  if (!includes(collection.map(Number), Number(date))) {
-    collection.push(date)
-    sort(collection)
+  if (!collection.map(Number).includes(Number(date))) {
+    collection.push(date);
+    sort(collection);
   }
 }
 
 function rdatesToString(
   param: string,
   rdates: Date[],
-  tzid: string | undefined
+  tzid: string | undefined,
 ) {
-  const isUTC = !tzid || tzid.toUpperCase() === 'UTC'
-  const header = isUTC ? `${param}:` : `${param};TZID=${tzid}:`
+  const isUTC = !tzid || tzid.toUpperCase() === 'UTC';
+  const header = isUTC ? `${param}:` : `${param};TZID=${tzid}:`;
 
   const dateString = rdates
     .map((rdate) => timeToUntilString(rdate.valueOf(), isUTC))
-    .join(',')
+    .join(',');
 
-  return `${header}${dateString}`
+  return `${header}${dateString}`;
 }

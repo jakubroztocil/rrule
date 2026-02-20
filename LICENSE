@@ -1,6 +1,7 @@
 rrule.js: Library for working with recurrence rules for calendar dates.
 =======================================================================
 
+Copyright 2016, Shavonn Brown <shavonn@offloadproject.com>
 Copyright 2010, Jakub Roztocil <jakub@roztocil.name> and Lars Schöning
 
 Redistribution and use in source and binary forms, with or without
@@ -30,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 
-./rrule.js and ./test/tests.js is based on python-dateutil. LICENCE:
+./rrule.js and ./test/tests.js is based on python-dateutil. LICENSE:
 
 python-dateutil - Extensions to the standard Python datetime module.
 ====================================================================

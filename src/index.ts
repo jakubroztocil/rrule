@@ -14,11 +14,9 @@
  *
  */
 
-export { RRule } from './rrule'
-export { RRuleSet } from './rruleset'
-
-export { rrulestr } from './rrulestr'
-export { Frequency, ByWeekday, Options } from './types'
-export { Weekday, WeekdayStr, ALL_WEEKDAYS } from './weekday'
-export { RRuleStrOptions } from './rrulestr'
-export { datetime } from './dateutil'
+export { datetime } from './dateutil';
+export { RRule } from './rrule';
+export { RRuleSet } from './rruleset';
+export { type RRuleStrOptions, rrulestr } from './rrulestr';
+export { type ByWeekday, Frequency, type Options } from './types';
+export { ALL_WEEKDAYS, Weekday, type WeekdayStr } from './weekday';

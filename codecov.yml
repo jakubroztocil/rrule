@@ -1,6 +1,0 @@
-ignore:
-  - 'dist/'
-  - 'test/'
-  - 'node_modules/'
-  - '.github/'
-  - 'webpack.config.js'
