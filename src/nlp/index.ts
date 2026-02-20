@@ -93,6 +93,7 @@ import ToText, { type DateFormatter, type GetText } from './totext';
  * [yearday]: first, 1., 2., 1st, 2nd, second, ... 366th, last day, 2nd last day, ..
  *
  * @param {String} text
+ * @param language
  * @return {Object, Boolean} the rule, or null.
  */
 const fromText = (text: string, language: Language = ENGLISH) =>

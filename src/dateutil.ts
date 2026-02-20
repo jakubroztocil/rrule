@@ -138,8 +138,7 @@ export const combine = (date: Date, time: Date | Time) => {
 };
 
 export const clone = (date: Date | Time) => {
-  const dolly = new Date(date.getTime());
-  return dolly;
+  return new Date(date.getTime());
 };
 
 export const cloneDates = (dates: Date[] | Time[]) => {

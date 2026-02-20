@@ -120,12 +120,11 @@ export function rebuildYear(year: number, options: ParsedOptions) {
     if (!options.byweekno.includes(-1)) {
       const lyearweekday = getWeekday(datetime(year - 1, 1, 1));
 
-      let lno1wkst = pymod(7 - lyearweekday.valueOf() + options.wkst, 7);
+      const lno1wkst = pymod(7 - lyearweekday.valueOf() + options.wkst, 7);
 
       const lyearlen = isLeapYear(year - 1) ? 366 : 365;
       let weekst: number;
       if (lno1wkst >= 4) {
-        lno1wkst = 0;
         weekst = lyearlen + pymod(lyearweekday - options.wkst, 7);
       } else {
         weekst = yearlen - no1wkst;

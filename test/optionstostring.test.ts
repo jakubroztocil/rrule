@@ -1,7 +1,6 @@
+import type { Options } from '../src';
+import { datetime, RRule } from '../src';
 import { optionsToString } from '../src/optionstostring';
-import { RRule } from '../src/rrule';
-import type { Options } from '../src/types';
-import { datetime } from './lib/utils';
 
 describe('optionsToString', () => {
   it('serializes valid single lines of rrules', () => {

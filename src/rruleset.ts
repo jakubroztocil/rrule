@@ -2,7 +2,7 @@ import { sort, timeToUntilString } from './dateutil';
 import type IterResult from './iterresult';
 import { iterSet } from './iterset';
 import { optionsToString } from './optionstostring';
-import { RRule } from './rrule';
+import type { RRule } from './rrule';
 import { RRuleBase } from './rrulebase';
 import type { IterResultType, QueryMethodTypes } from './types';
 
@@ -72,7 +72,7 @@ export class RRuleSet extends RRuleBase {
   /**
    * Adds an RRule to the set
    *
-   * @param {RRule}
+   * @param rrule
    */
   rrule(rrule: RRule) {
     _addRule(rrule, this._rrule);
@@ -81,7 +81,7 @@ export class RRuleSet extends RRuleBase {
   /**
    * Adds an EXRULE to the set
    *
-   * @param {RRule}
+   * @param rrule
    */
   exrule(rrule: RRule) {
     _addRule(rrule, this._exrule);
@@ -90,7 +90,7 @@ export class RRuleSet extends RRuleBase {
   /**
    * Adds an RDate to the set
    *
-   * @param {Date}
+   * @param date
    */
   rdate(date: Date) {
     _addDate(date, this._rdate);
@@ -99,7 +99,7 @@ export class RRuleSet extends RRuleBase {
   /**
    * Adds an EXDATE to the set
    *
-   * @param {Date}
+   * @param date
    */
   exdate(date: Date) {
     _addDate(date, this._exdate);
@@ -199,10 +199,6 @@ export class RRuleSet extends RRuleBase {
 }
 
 function _addRule(rrule: RRule, collection: RRule[]) {
-  if (!(rrule instanceof RRule)) {
-    throw new TypeError(`${String(rrule)} is not RRule instance`);
-  }
-
   const str = String(rrule);
   if (!collection.some((r) => String(r) === str)) {
     collection.push(rrule);
@@ -210,9 +206,6 @@ function _addRule(rrule: RRule, collection: RRule[]) {
 }
 
 function _addDate(date: Date, collection: Date[]) {
-  if (!(date instanceof Date)) {
-    throw new TypeError(`${String(date)} is not Date instance`);
-  }
   const time = date.getTime();
   if (!collection.some((d) => d.getTime() === time)) {
     collection.push(date);

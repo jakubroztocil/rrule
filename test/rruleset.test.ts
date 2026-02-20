@@ -769,20 +769,6 @@ describe('RRuleSet', () => {
     expect(() => set.all().map(String)).toThrow(RangeError);
   });
 
-  it('throws an error if non-rrules are added via rrule or exrule', () => {
-    const set = new RRuleSet();
-
-    expect(() => set.rrule('foo' as unknown as RRule)).toThrow();
-    expect(() => set.exrule('foo' as unknown as RRule)).toThrow();
-  });
-
-  it('throws an error if non-dates are added via rdate or exdate', () => {
-    const set = new RRuleSet();
-
-    expect(() => set.rdate('foo' as unknown as Date)).toThrow();
-    expect(() => set.exdate('foo' as unknown as Date)).toThrow();
-  });
-
   describe('getters', () => {
     it('rrules()', () => {
       const set = new RRuleSet();

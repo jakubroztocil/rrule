@@ -1,7 +1,5 @@
+import { datetime, Frequency, type Options, RRule } from '../src';
 import { parseString } from '../src/parsestring';
-import { RRule } from '../src/rrule';
-import { Frequency, type Options } from '../src/types';
-import { datetime } from './lib/utils';
 
 describe('parseString', () => {
   it('parses valid single lines of rrules', () => {

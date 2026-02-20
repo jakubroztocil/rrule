@@ -114,8 +114,7 @@ export class DateTime extends Time {
     this.month += months;
     if (this.month > 12) {
       const yearDiv = Math.floor(this.month / 12);
-      const monthMod = pymod(this.month, 12);
-      this.month = monthMod;
+      this.month = pymod(this.month, 12);
       this.year += yearDiv;
       if (this.month === 0) {
         this.month = 12;

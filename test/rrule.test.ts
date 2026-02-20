@@ -1,5 +1,5 @@
 import { reset as resetMockDate, set as setMockDate } from 'mockdate';
-import { Frequency, RRule, rrulestr } from '../src/index';
+import { Frequency, RRule, rrulestr } from '../src';
 import {
   datetime,
   expectedDate,
