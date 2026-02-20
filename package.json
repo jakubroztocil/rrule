@@ -1,20 +1,20 @@
 {
   "name": "rrule",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.9.0",
   "type": "module",
-  "main": "./dist/rrule-rebuild.cjs",
-  "module": "./dist/rrule-rebuild.js",
+  "main": "./dist/rrule.cjs",
+  "module": "./dist/rrule.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/rrule-rebuild.js"
+        "default": "./dist/rrule.js"
       },
       "require": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/rrule-rebuild.cjs"
+        "default": "./dist/rrule.cjs"
       }
     }
   },
@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.2",
+    "@microsoft/api-extractor": "^7.57.2",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.3.0",
     "jest": "^30.2.0",
@@ -39,6 +40,7 @@
     "terser": "^5.46.0",
     "ts-jest": "^29.4.6",
     "typescript": "^5.9.3",
+    "unplugin-dts": "^1.0.0-beta.6",
     "vite": "^7.3.1"
   }
 }

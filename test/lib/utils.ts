@@ -10,7 +10,11 @@ export const TEST_CTX = {
   ALSO_TESTSUBSECOND_PRECISION: false,
 };
 
-const assertDatesEqual = (actual: Date | Date[], expected: Date | Date[]) => {
+const assertDatesEqual = (
+  actual: Date | Date[] | null,
+  expected: Date | Date[],
+) => {
+  if (actual === null) actual = [];
   if (!Array.isArray(actual)) actual = [actual];
   if (!Array.isArray(expected)) expected = [expected];
 
@@ -21,7 +25,7 @@ const assertDatesEqual = (actual: Date | Date[], expected: Date | Date[]) => {
   for (let i = 0; i < expected.length; i++) {
     const act = actual[i];
     const exp = expected[i];
-    expect(exp instanceof Date ? exp.toString() : exp).toBe(act.toString());
+    expect(exp instanceof Date ? exp.toString() : exp).toBe(act?.toString());
   }
 };
 
@@ -32,14 +36,18 @@ const extractTime = (date: Date) => (date != null ? date.getTime() : void 0);
  */
 export const parse = (str: string) => {
   const parts = str.match(/^(\d{4})(\d{2})(\d{2})T(\d{2})(\d{2})(\d{2})/);
-  const [, y, m, d, h, i, s] = parts;
-  const year = Number(y);
-  const month = Number(m[0] === '0' ? m[1] : m);
-  const day = Number(d[0] === '0' ? d[1] : d);
-  const hour = Number(h[0] === '0' ? h[1] : h);
-  const minute = Number(i[0] === '0' ? i[1] : i);
-  const second = Number(s[0] === '0' ? s[1] : s);
-  return datetime(year, month, day, hour, minute, second);
+  if (!parts) {
+    throw new Error(`Invalid date string: ${str}`);
+  }
+
+  return datetime(
+    Number(parts[1]),
+    Number(parts[2]),
+    Number(parts[3]),
+    Number(parts[4]),
+    Number(parts[5]),
+    Number(parts[6]),
+  );
 };
 
 interface TestRecurring {
@@ -89,22 +97,20 @@ export const testRecurring = ((
       rule.toString() +
       ']';
   } else {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     msg = `${msg} ${rule.toString()}`;
   }
 
   itFunc(msg, () => {
     let time = Date.now();
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
+    // @ts-expect-error - dynamic method dispatch
     let actualDates = rule[method](...args);
     time = Date.now() - time;
 
     const maxTestDuration = 200;
     expect(time).toBeLessThan(maxTestDuration);
 
-    if (!Array.isArray(actualDates)) actualDates = [actualDates];
+    if (!Array.isArray(actualDates))
+      actualDates = actualDates ? [actualDates] : [];
     if (!Array.isArray(expectedDates)) expectedDates = [expectedDates];
 
     assertDatesEqual(actualDates, expectedDates);
@@ -131,21 +137,19 @@ export const testRecurring = ((
 
     if (
       TEST_CTX.ALSO_TESTNLP_FUNCTIONS &&
-      rule.isFullyConvertibleToText &&
+      rule instanceof RRule &&
       rule.isFullyConvertibleToText()
     ) {
       // Test fromText()/toText().
       const str = rule.toString();
       const text = rule.toText();
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
+      // @ts-expect-error - dtstart as second arg
       const rrule2 = RRule.fromText(text, rule.options.dtstart);
       const text2 = rrule2.toText();
       expect(text2).toBe(text);
 
       // Test fromText()/toString().
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
+      // @ts-expect-error - dtstart as second arg
       const rrule3 = RRule.fromText(text, rule.options.dtstart);
       expect(rrule3.toString()).toBe(str);
     }
@@ -159,8 +163,8 @@ export const testRecurring = ((
         // Test between()
         assertDatesEqual(
           rule.between(
-            expectedDates[0],
-            expectedDates[expectedDates.length - 1],
+            expectedDates[0]!,
+            expectedDates[expectedDates.length - 1]!,
             true,
           ),
           expectedDates,
@@ -168,8 +172,8 @@ export const testRecurring = ((
 
         assertDatesEqual(
           rule.between(
-            expectedDates[0],
-            expectedDates[expectedDates.length - 1],
+            expectedDates[0]!,
+            expectedDates[expectedDates.length - 1]!,
             false,
           ),
           expectedDates.slice(1, expectedDates.length - 1),
@@ -177,21 +181,18 @@ export const testRecurring = ((
       }
 
       if (expectedDates.length > 1) {
-        let date: Date;
-        let next: Date | undefined;
-        let prev: Date | undefined;
         for (let i = 0; i < expectedDates.length; i++) {
-          date = expectedDates[i];
-          next = expectedDates[i + 1];
-          prev = expectedDates[i - 1];
+          const date = expectedDates[i]!;
+          const next = expectedDates[i + 1];
+          const prev = expectedDates[i - 1];
 
           // Test after() and before() with inc=true.
           assertDatesEqual(rule.after(date, true), date);
           assertDatesEqual(rule.before(date, true), date);
 
           // Test after() and before() with inc=false.
-          next && assertDatesEqual(rule.after(date, false), next);
-          prev && assertDatesEqual(rule.before(date, false), prev);
+          if (next) assertDatesEqual(rule.after(date, false), next);
+          if (prev) assertDatesEqual(rule.before(date, false), prev);
         }
       }
     }
@@ -199,11 +200,15 @@ export const testRecurring = ((
 }) as TestRecurring;
 
 testRecurring.only = (...args) => {
-  testRecurring.apply(it, [...args, it.only]);
+  testRecurring.apply(it, [...args, it.only] as unknown as [
+    string,
+    unknown,
+    Date | Date[],
+  ]);
 };
 
-testRecurring.skip = ([description]: [string]) => {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function, no-empty-function
+testRecurring.skip = (...args) => {
+  const [description] = args as [string];
   it.skip(description, () => {});
 };
 
