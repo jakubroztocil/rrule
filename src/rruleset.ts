@@ -2,7 +2,7 @@ import { sort, timeToUntilString } from './dateutil';
 import type IterResult from './iterresult';
 import { iterSet } from './iterset';
 import { optionsToString } from './optionstostring';
-import type { RRule } from './rrule';
+import { RRule } from './rrule';
 import { RRuleBase } from './rrulebase';
 import type { IterResultType, QueryMethodTypes } from './types';
 
@@ -199,6 +199,10 @@ export class RRuleSet extends RRuleBase {
 }
 
 function _addRule(rrule: RRule, collection: RRule[]) {
+  if (!(rrule instanceof RRule)) {
+    throw new TypeError(`${String(rrule)} is not an instance of RRule`);
+  }
+
   const str = String(rrule);
   if (!collection.some((r) => String(r) === str)) {
     collection.push(rrule);
@@ -206,6 +210,10 @@ function _addRule(rrule: RRule, collection: RRule[]) {
 }
 
 function _addDate(date: Date, collection: Date[]) {
+  if (!(date instanceof Date)) {
+    throw new TypeError(`${String(date)} is not an instance of Date`);
+  }
+
   const time = date.getTime();
   if (!collection.some((d) => d.getTime() === time)) {
     collection.push(date);
