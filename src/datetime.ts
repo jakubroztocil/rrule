@@ -125,10 +125,10 @@ export class DateTime extends Time {
   }
 
   public addWeekly(days: number, wkst: number) {
-    if (wkst > this.getWeekday()!) {
-      this.day += -(this.getWeekday()! + 1 + (6 - wkst)) + days * 7;
+    if (wkst > this.getWeekday()) {
+      this.day += -(this.getWeekday() + 1 + (6 - wkst)) + days * 7;
     } else {
-      this.day += -(this.getWeekday()! - wkst) + days * 7;
+      this.day += -(this.getWeekday() - wkst) + days * 7;
     }
 
     this.fixDay();
@@ -225,7 +225,7 @@ export class DateTime extends Time {
       return;
     }
 
-    let daysinmonth = monthRange(this.year, this.month - 1)[1]!;
+    let daysinmonth = monthRange(this.year, this.month - 1)[1];
     if (this.day <= daysinmonth) {
       return;
     }
@@ -241,7 +241,7 @@ export class DateTime extends Time {
         }
       }
 
-      daysinmonth = monthRange(this.year, this.month - 1)[1]!;
+      daysinmonth = monthRange(this.year, this.month - 1)[1];
     }
   }
 

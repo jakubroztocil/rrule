@@ -98,22 +98,23 @@ export const toOrdinal = (date: Date) => daysBetween(date, ORDINAL_BASE);
 export const fromOrdinal = (ordinal: number) =>
   new Date(ORDINAL_BASE.getTime() + ordinal * ONE_DAY);
 
-export const getMonthDays = (date: Date) => {
+export const getMonthDays = (date: Date): number => {
   const month = date.getUTCMonth();
   return month === 1 && isLeapYear(date.getUTCFullYear())
     ? 29
-    : MONTH_DAYS[month];
+    : MONTH_DAYS[month]!;
 };
 
 /**
  * @return {Number} python-like weekday
  */
-export const getWeekday = (date: Date) => PY_WEEKDAYS[date.getUTCDay()];
+export const getWeekday = (date: Date): number =>
+  PY_WEEKDAYS[date.getUTCDay()]!;
 
 /**
  * @see: <http://docs.python.org/library/calendar.html#calendar.monthrange>
  */
-export const monthRange = (year: number, month: number) => {
+export const monthRange = (year: number, month: number): [number, number] => {
   const date = datetime(year, month + 1, 1);
   return [getWeekday(date), getMonthDays(date)];
 };
@@ -143,8 +144,8 @@ export const clone = (date: Date | Time) => {
 
 export const cloneDates = (dates: Date[] | Time[]) => {
   const clones = [];
-  for (let i = 0; i < dates.length; i++) {
-    clones.push(clone(dates[i]!));
+  for (const date of dates) {
+    clones.push(clone(date));
   }
   return clones;
 };

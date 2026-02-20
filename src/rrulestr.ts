@@ -43,7 +43,7 @@ export function parseInput(s: string, options: Partial<RRuleStrOptions>) {
     if (!line) return;
     const { name, parms, value } = breakDownLine(line);
 
-    switch (name!.toUpperCase()) {
+    switch (name.toUpperCase()) {
       case 'RRULE':
         if (parms.length) {
           throw new Error(`unsupported RRULE parm: ${parms.join(',')}`);
@@ -57,7 +57,7 @@ export function parseInput(s: string, options: Partial<RRuleStrOptions>) {
         if (rdateTzid && !tzid) {
           tzid = rdateTzid;
         }
-        rdatevals = rdatevals.concat(parseRDate(value!, parms));
+        rdatevals = rdatevals.concat(parseRDate(value, parms));
         break;
       }
 
@@ -66,11 +66,11 @@ export function parseInput(s: string, options: Partial<RRuleStrOptions>) {
           throw new Error(`unsupported EXRULE parm: ${parms.join(',')}`);
         }
 
-        exrulevals.push(parseString(value!));
+        exrulevals.push(parseString(value));
         break;
 
       case 'EXDATE':
-        exdatevals = exdatevals.concat(parseRDate(value!, parms));
+        exdatevals = exdatevals.concat(parseRDate(value, parms));
         break;
 
       case 'DTSTART':
@@ -182,7 +182,7 @@ function initializeOptions(options: Partial<RRuleStrOptions>) {
   return { ...DEFAULT_OPTIONS, ...options };
 }
 
-function extractName(line: string) {
+function extractName(line: string): { name: string; value: string } {
   if (line.indexOf(':') === -1) {
     return {
       name: 'RRULE',
@@ -190,7 +190,7 @@ function extractName(line: string) {
     };
   }
 
-  const [name, value] = split(line, ':', 1);
+  const [name = '', value = ''] = split(line, ':', 1);
   return {
     name,
     value,
@@ -199,7 +199,7 @@ function extractName(line: string) {
 
 function breakDownLine(line: string) {
   const { name, value } = extractName(line);
-  const parms = name!.split(';');
+  const parms = name.split(';');
   if (!parms) throw new Error('empty property name');
 
   return {

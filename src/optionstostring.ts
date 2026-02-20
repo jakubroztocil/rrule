@@ -11,12 +11,12 @@ export function optionsToString(options: Partial<Options>) {
   const keys: (keyof Options)[] = Object.keys(options) as (keyof Options)[];
   const defaultKeys = Object.keys(DEFAULT_OPTIONS);
 
-  for (let i = 0; i < keys.length; i++) {
-    if (keys[i]! === 'tzid') continue;
-    if (!defaultKeys.includes(keys[i]!)) continue;
+  for (const optKey of keys) {
+    if (optKey === 'tzid') continue;
+    if (!defaultKeys.includes(optKey)) continue;
 
-    let key = keys[i]!.toUpperCase();
-    const value = options[keys[i]!];
+    let key = optKey.toUpperCase();
+    const value = options[optKey];
     let outValue = '';
 
     if (!isPresent(value) || (isArray(value) && !value.length)) continue;
@@ -87,9 +87,7 @@ export function optionsToString(options: Partial<Options>) {
     }
   }
 
-  const rules = rrule
-    .map(([key, value]) => `${key}=${value!.toString()}`)
-    .join(';');
+  const rules = rrule.map(([key, value]) => `${key}=${value}`).join(';');
   let ruleString = '';
   if (rules !== '') {
     ruleString = `RRULE:${rules}`;

@@ -56,8 +56,7 @@ export function parseOptions(options: Partial<Options>) {
   if (isPresent(opts.bysetpos)) {
     if (isNumber(opts.bysetpos)) opts.bysetpos = [opts.bysetpos];
 
-    for (let i = 0; i < opts.bysetpos.length; i++) {
-      const v = opts.bysetpos[i]!;
+    for (const v of opts.bysetpos) {
       if (v === 0 || !(v >= -366 && v <= 366)) {
         throw new Error(
           'bysetpos must be between 1 and 366,' + ' or between -366 and -1',
@@ -113,8 +112,7 @@ export function parseOptions(options: Partial<Options>) {
     const bymonthday: number[] = [];
     const bynmonthday: number[] = [];
 
-    for (let i = 0; i < opts.bymonthday.length; i++) {
-      const v = opts.bymonthday[i]!;
+    for (const v of opts.bymonthday) {
       if (v > 0) {
         bymonthday.push(v);
       } else if (v < 0) {
@@ -155,11 +153,9 @@ export function parseOptions(options: Partial<Options>) {
     }
   } else {
     const byweekday: number[] = [];
-    const bynweekday = [];
+    const bynweekday: [number, number][] = [];
 
-    for (let i = 0; i < opts.byweekday.length; i++) {
-      const wday = opts.byweekday[i]!;
-
+    for (const wday of opts.byweekday) {
       if (isNumber(wday)) {
         byweekday.push(wday);
         continue;

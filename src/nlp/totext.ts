@@ -1,6 +1,6 @@
 import { isArray, isNumber, isPresent } from '../helpers';
 import { RRule } from '../rrule';
-import type { ByWeekday, Options } from '../types';
+import type { ByWeekday, Options, ParsedOptions } from '../types';
 import type { Weekday } from '../weekday';
 import ENGLISH, { type Language } from './i18n';
 
@@ -48,7 +48,7 @@ export default class ToText {
   private gettext: GetText;
   private dateFormatter: DateFormatter;
   private language: Language;
-  private options: Partial<Options>;
+  private options: ParsedOptions;
   private origOptions: Partial<Options>;
   private bymonthday!: Options['bymonthday'] | null;
   private byweekday: {
@@ -73,8 +73,8 @@ export default class ToText {
     this.origOptions = rrule.origOptions;
 
     if (this.origOptions.bymonthday) {
-      const bymonthday = ([] as number[]).concat(this.options.bymonthday!);
-      const bynmonthday = ([] as number[]).concat(this.options.bynmonthday!);
+      const bymonthday = ([] as number[]).concat(this.options.bymonthday);
+      const bynmonthday = ([] as number[]).concat(this.options.bynmonthday);
 
       bymonthday.sort((a, b) => a - b);
       bynmonthday.sort((a, b) => b - a);
@@ -161,14 +161,14 @@ export default class ToText {
   toString() {
     const gettext = this.gettext;
 
-    if (!(this.options.freq! in ToText.IMPLEMENTED)) {
+    if (!(this.options.freq in ToText.IMPLEMENTED)) {
       return gettext('RRule error: Unable to fully convert this rrule to text');
     }
 
     this.text = [gettext('every')];
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    this[RRule.FREQUENCIES[this.options.freq!]]();
+    this[RRule.FREQUENCIES[this.options.freq]]();
 
     if (this.options.until) {
       this.add(gettext('until'));
@@ -196,22 +196,20 @@ export default class ToText {
   HOURLY() {
     const gettext = this.gettext;
 
-    if (this.options.interval! !== 1)
-      this.add(this.options.interval!.toString());
+    if (this.options.interval !== 1) this.add(this.options.interval.toString());
 
     this.add(
-      this.plural(this.options.interval!) ? gettext('hours') : gettext('hour'),
+      this.plural(this.options.interval) ? gettext('hours') : gettext('hour'),
     );
   }
 
   MINUTELY() {
     const gettext = this.gettext;
 
-    if (this.options.interval! !== 1)
-      this.add(this.options.interval!.toString());
+    if (this.options.interval !== 1) this.add(this.options.interval.toString());
 
     this.add(
-      this.plural(this.options.interval!)
+      this.plural(this.options.interval)
         ? gettext('minutes')
         : gettext('minute'),
     );
@@ -220,18 +218,17 @@ export default class ToText {
   DAILY() {
     const gettext = this.gettext;
 
-    if (this.options.interval! !== 1)
-      this.add(this.options.interval!.toString());
+    if (this.options.interval !== 1) this.add(this.options.interval.toString());
 
     if (this.byweekday?.isWeekdays) {
       this.add(
-        this.plural(this.options.interval!)
+        this.plural(this.options.interval)
           ? gettext('weekdays')
           : gettext('weekday'),
       );
     } else {
       this.add(
-        this.plural(this.options.interval!) ? gettext('days') : gettext('day'),
+        this.plural(this.options.interval) ? gettext('days') : gettext('day'),
       );
     }
 
@@ -252,18 +249,16 @@ export default class ToText {
   WEEKLY() {
     const gettext = this.gettext;
 
-    if (this.options.interval! !== 1) {
-      this.add(this.options.interval!.toString()).add(
-        this.plural(this.options.interval!)
-          ? gettext('weeks')
-          : gettext('week'),
+    if (this.options.interval !== 1) {
+      this.add(this.options.interval.toString()).add(
+        this.plural(this.options.interval) ? gettext('weeks') : gettext('week'),
       );
     }
 
     if (this.byweekday?.isWeekdays) {
-      if (this.options.interval! === 1) {
+      if (this.options.interval === 1) {
         this.add(
-          this.plural(this.options.interval!)
+          this.plural(this.options.interval)
             ? gettext('weekdays')
             : gettext('weekday'),
         );
@@ -272,10 +267,10 @@ export default class ToText {
       }
     } else if (this.byweekday?.isEveryDay) {
       this.add(
-        this.plural(this.options.interval!) ? gettext('days') : gettext('day'),
+        this.plural(this.options.interval) ? gettext('days') : gettext('day'),
       );
     } else {
-      if (this.options.interval! === 1) this.add(gettext('week'));
+      if (this.options.interval === 1) this.add(gettext('week'));
 
       if (this.origOptions.bymonth) {
         this.add(gettext('in'));
@@ -298,19 +293,19 @@ export default class ToText {
     const gettext = this.gettext;
 
     if (this.origOptions.bymonth) {
-      if (this.options.interval! !== 1) {
-        this.add(this.options.interval!.toString()).add(gettext('months'));
-        if (this.plural(this.options.interval!)) this.add(gettext('in'));
+      if (this.options.interval !== 1) {
+        this.add(this.options.interval.toString()).add(gettext('months'));
+        if (this.plural(this.options.interval)) this.add(gettext('in'));
       } else {
         // this.add(gettext('MONTH'))
       }
       this._bymonth();
     } else {
-      if (this.options.interval! !== 1) {
-        this.add(this.options.interval!.toString());
+      if (this.options.interval !== 1) {
+        this.add(this.options.interval.toString());
       }
       this.add(
-        this.plural(this.options.interval!)
+        this.plural(this.options.interval)
           ? gettext('months')
           : gettext('month'),
       );
@@ -328,21 +323,19 @@ export default class ToText {
     const gettext = this.gettext;
 
     if (this.origOptions.bymonth) {
-      if (this.options.interval! !== 1) {
-        this.add(this.options.interval!.toString());
+      if (this.options.interval !== 1) {
+        this.add(this.options.interval.toString());
         this.add(gettext('years'));
       } else {
         // this.add(gettext('YEAR'))
       }
       this._bymonth();
     } else {
-      if (this.options.interval! !== 1) {
-        this.add(this.options.interval!.toString());
+      if (this.options.interval !== 1) {
+        this.add(this.options.interval.toString());
       }
       this.add(
-        this.plural(this.options.interval!)
-          ? gettext('years')
-          : gettext('year'),
+        this.plural(this.options.interval) ? gettext('years') : gettext('year'),
       );
     }
 
@@ -428,7 +421,7 @@ export default class ToText {
   private _bymonth() {
     this.add(
       this.list(
-        this.options.bymonth!,
+        this.options.bymonth,
         this.monthtext as unknown as GetText,
         this.gettext('and'),
       ),

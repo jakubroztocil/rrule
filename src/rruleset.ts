@@ -187,7 +187,7 @@ export class RRuleSet extends RRule {
    * Create a new RRuleSet Object completely base on current instance
    */
   clone(): RRuleSet {
-    const rrs = new RRuleSet(!!this._cache);
+    const rrs = new RRuleSet(!this._cache);
 
     for (const rule of this._rrule) rrs.rrule(rule.clone());
     for (const rule of this._exrule) rrs.exrule(rule.clone());

@@ -43,8 +43,7 @@ export function iter<M extends QueryMethodTypes>(
     if (notEmpty(bysetpos)) {
       const poslist = buildPoslist(bysetpos, timeset!, start, end, ii, dayset);
 
-      for (let j = 0; j < poslist.length; j++) {
-        const res = poslist[j]!;
+      for (const res of poslist) {
         if (until && res > until) {
           return emitResult(iterResult);
         }
@@ -71,8 +70,7 @@ export function iter<M extends QueryMethodTypes>(
         }
 
         const date = fromOrdinal(ii.yearordinal + currentDay);
-        for (let k = 0; k < timeset!.length; k++) {
-          const time = timeset![k]!;
+        for (const time of timeset!) {
           const res = combine(date, time);
           if (until && res > until) {
             return emitResult(iterResult);
@@ -94,10 +92,6 @@ export function iter<M extends QueryMethodTypes>(
         }
       }
     }
-    if (options.interval === 0) {
-      return emitResult(iterResult);
-    }
-
     // Handle frequency and interval
     counterDate.add(options, filtered);
 
@@ -171,9 +165,10 @@ function removeFilteredDays(
   for (let dayCounter = start; dayCounter < end; dayCounter++) {
     const currentDay = dayset[dayCounter]!;
 
-    filtered = isFiltered(ii, currentDay, options);
-
-    if (filtered) dayset[currentDay!] = null;
+    if (isFiltered(ii, currentDay, options)) {
+      filtered = true;
+      dayset[currentDay] = null;
+    }
   }
 
   return filtered;

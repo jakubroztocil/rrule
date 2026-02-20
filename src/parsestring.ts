@@ -22,12 +22,12 @@ export function parseDtstart(line: string) {
     return options;
   }
 
-  const [, tzid, dtstart] = dtstartWithZone;
+  const [, tzid, dtstart = ''] = dtstartWithZone;
 
   if (tzid) {
     options.tzid = tzid;
   }
-  options.dtstart = untilStringToDate(dtstart!);
+  options.dtstart = untilStringToDate(dtstart);
   return options;
 }
 
@@ -40,8 +40,8 @@ function parseLine(rfcString: string) {
     return parseRrule(rfcString);
   }
 
-  const [, key] = header;
-  switch (key!.toUpperCase()) {
+  const key = header[1]!;
+  switch (key.toUpperCase()) {
     case 'RRULE':
     case 'EXRULE':
       return parseRrule(rfcString);
@@ -59,14 +59,13 @@ function parseRrule(line: string) {
   const attrs = line.replace(/^(?:RRULE|EXRULE):/i, '').split(';');
 
   attrs.forEach((attr) => {
-    const [key, value] = attr.split('=');
-    switch (key!.toUpperCase()) {
+    const [key = '', value = ''] = attr.split('=');
+    switch (key.toUpperCase()) {
       case 'FREQ':
-        options.freq =
-          Frequency[value!.toUpperCase() as keyof typeof Frequency];
+        options.freq = Frequency[value.toUpperCase() as keyof typeof Frequency];
         break;
       case 'WKST':
-        options.wkst = Days[value!.toUpperCase() as keyof typeof Days];
+        options.wkst = Days[value.toUpperCase() as keyof typeof Days];
         break;
       case 'COUNT':
       case 'INTERVAL':
@@ -78,16 +77,15 @@ function parseRrule(line: string) {
       case 'BYHOUR':
       case 'BYMINUTE':
       case 'BYSECOND': {
-        const num = parseNumber(value!);
-        const optionKey = key!.toLowerCase();
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+        const num = parseNumber(value);
+        const optionKey = key.toLowerCase();
+        // @ts-expect-error dynamic key assignment
         options[optionKey] = num;
         break;
       }
       case 'BYWEEKDAY':
       case 'BYDAY':
-        options.byweekday = parseWeekday(value!);
+        options.byweekday = parseWeekday(value);
         break;
       case 'DTSTART':
       case 'TZID': {
@@ -98,13 +96,13 @@ function parseRrule(line: string) {
         break;
       }
       case 'UNTIL':
-        options.until = untilStringToDate(value!);
+        options.until = untilStringToDate(value);
         break;
       case 'BYEASTER':
-        options.byeaster = Number(value!);
+        options.byeaster = Number(value);
         break;
       default:
-        throw new Error(`Unknown RRULE property '${key!}'`);
+        throw new Error(`Unknown RRULE property '${key}'`);
     }
   });
 

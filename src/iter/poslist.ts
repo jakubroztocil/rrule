@@ -13,10 +13,9 @@ export function buildPoslist(
 ) {
   const poslist: Date[] = [];
 
-  for (let j = 0; j < bysetpos.length; j++) {
+  for (const pos of bysetpos) {
     let daypos: number;
     let timepos: number;
-    const pos = bysetpos[j]!;
 
     if (pos < 0) {
       daypos = Math.floor(pos / timeset.length);

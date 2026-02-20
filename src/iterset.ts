@@ -54,8 +54,8 @@ export function iterSet<M extends QueryMethodTypes>(
     };
   }
 
-  for (let i = 0; i < _rdate.length; i++) {
-    const zonedDate = new DateWithZone(_rdate[i]!, tzid).rezonedDate();
+  for (const rdate of _rdate) {
+    const zonedDate = new DateWithZone(rdate, tzid).rezonedDate();
     if (!iterResult.accept(new Date(zonedDate.getTime()))) break;
   }
 

@@ -49,7 +49,7 @@ export interface Options {
   byyearday: number | number[] | null;
   byweekno: number | number[] | null;
   byweekday: ByWeekday | ByWeekday[] | null;
-  bynweekday: number[][] | null;
+  bynweekday: [number, number][] | null;
   byhour: number | number[] | null;
   byminute: number | number[] | null;
   bysecond: number | number[] | null;
