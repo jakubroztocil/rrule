@@ -1,5 +1,5 @@
 ---
-"rrule": patch
+"@shavonn/rrule": patch
 ---
 
 Refactored the core recurrence-rule implementation to share query/caching logic across RRule and RRuleSet, while also fixing a few correctness/performance issues in iteration and caching behavior.
