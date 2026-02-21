@@ -6,11 +6,12 @@ import ToText, { type DateFormatter, type GetText } from './totext';
 
 /* !
  * rrule.js - Library for working with recurrence rules for calendar dates.
- * https://github.com/jakubroztocil/rrule
+ * https://github.com/shavonn/rrule
  *
  * Copyright 2010, Jakub Roztocil and Lars Schoning
- * Licenced under the BSD licence.
- * https://github.com/jakubroztocil/rrule/blob/master/LICENCE
+ * Copyright 2026, Shavonn Brown
+ * Licenced under the BSD license.
+ * https://github.com/shavonn/rrule/blob/main/LICENSE
  *
  */
 
