@@ -49,7 +49,7 @@ export class Cache {
     } else {
       args!._value = value;
       // Evict oldest entry if cache is full
-      if (this[what].length >= MAX_CACHE_SIZE) {
+      if (this[what].length > MAX_CACHE_SIZE) {
         this[what].shift();
       }
       this[what].push(args as IterArgs);
