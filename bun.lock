@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "rrule-rebuild",
+      "name": "@shavonn/rrule",
       "devDependencies": {
         "@biomejs/biome": "^2.4.4",
         "@changesets/cli": "^2.29.8",
