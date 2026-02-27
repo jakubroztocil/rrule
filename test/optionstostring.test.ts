@@ -32,6 +32,14 @@ describe('optionsToString', () => {
         },
         'DTSTART;TZID=America/New_York:19970902T090000\n' + 'RRULE:FREQ=WEEKLY',
       ],
+      [
+        {
+          freq: RRule.MONTHLY,
+          count: 3,
+          byweekday: ['MO', 'TU'],
+        },
+        'RRULE:FREQ=MONTHLY;COUNT=3;BYDAY=MO,TU',
+      ],
     ]
 
     expectations.forEach(function (item) {
@@ -40,5 +48,15 @@ describe('optionsToString', () => {
       // JSON.stringify(s)
       expect(optionsToString(s)).toEqual(s2)
     })
+  })
+
+  it('serializes WeekdayStr arrays through RRule.toString()', () => {
+    const rule = new RRule({
+      freq: RRule.MONTHLY,
+      count: 3,
+      byweekday: ['MO', 'TU'],
+    })
+
+    expect(rule.toString()).toBe('RRULE:FREQ=MONTHLY;COUNT=3;BYDAY=MO,TU')
   })
 })
