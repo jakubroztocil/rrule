@@ -719,6 +719,27 @@ describe('RRule', function () {
   )
 
   testRecurring(
+    'testMonthlyNegativeBySetPosOutOfRange',
+    new RRule({
+      freq: RRule.MONTHLY,
+      count: 6,
+      bymonthday: [20, 31],
+      bysetpos: -2,
+      dtstart: parse('20100101T000000'),
+    }),
+    // Months without a 31st have a single-element set, so -2 selects nothing
+    // and they are skipped (matching python-dateutil).
+    [
+      datetime(2010, 1, 20),
+      datetime(2010, 3, 20),
+      datetime(2010, 5, 20),
+      datetime(2010, 7, 20),
+      datetime(2010, 8, 20),
+      datetime(2010, 10, 20),
+    ]
+  )
+
+  testRecurring(
     'testYearlyBetweenInc',
     {
       rrule: new RRule({
