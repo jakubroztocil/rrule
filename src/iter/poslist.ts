@@ -34,7 +34,12 @@ export function buildPoslist(
     }
     let i: number
     if (daypos < 0) {
-      i = tmp.slice(daypos)[0]
+      // Negative position counts from the end. `tmp.slice(daypos)[0]` clamps an
+      // out-of-range start to 0 and would return the first element, so a
+      // position that does not exist in the set wrongly emits an occurrence.
+      // Index from the end instead, yielding undefined (skipped) when out of
+      // range, mirroring the positive branch.
+      i = tmp[tmp.length + daypos]
     } else {
       i = tmp[daypos]
     }
