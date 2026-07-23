@@ -4246,4 +4246,23 @@ describe('RRule', function () {
       'Invalid date passed in to RRule.between'
     )
   })
+
+  it('does not emit a BYSETPOS occurrence more than once', function () {
+    // BYSETPOS 1 and -1 both select the single Jan 15 candidate, so it must
+    // appear once per year, not twice (RFC 5545: the set holds distinct dates)
+    const rule = new RRule({
+      freq: RRule.YEARLY,
+      bymonth: 1,
+      bymonthday: 15,
+      bysetpos: [1, -1],
+      count: 6,
+      dtstart: datetime(2023, 1, 1, 9, 0, 0),
+    })
+    const dates = rule.all()
+    const iso = dates.map(function (d) {
+      return d.toISOString()
+    })
+    expect(new Set(iso).size).toBe(dates.length)
+    expect(dates.length).toBe(6)
+  })
 })

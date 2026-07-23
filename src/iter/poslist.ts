@@ -1,6 +1,6 @@
 import { combine, fromOrdinal, sort } from '../dateutil'
 import Iterinfo from '../iterinfo/index'
-import { pymod, isPresent, includes } from '../helpers'
+import { pymod, isPresent } from '../helpers'
 import { Time } from '../datetime'
 
 export function buildPoslist(
@@ -42,9 +42,10 @@ export function buildPoslist(
     const time = timeset[timepos]
     const date = fromOrdinal(ii.yearordinal + i)
     const res = combine(date, time)
-    // XXX: can this ever be in the array?
-    // - compare the actual date instead?
-    if (!includes(poslist, res)) poslist.push(res)
+    // dedupe by value: `res` is a fresh Date each iteration, so an identity
+    // check never matches two BYSETPOS positions that resolve to the same
+    // instant (RFC 5545 defines the recurrence set as a set of DATE-TIMEs)
+    if (!poslist.some((d) => d.getTime() === res.getTime())) poslist.push(res)
   }
 
   sort(poslist)
