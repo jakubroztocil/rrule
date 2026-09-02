@@ -1,4 +1,5 @@
 import { RRule } from './rrule'
+import { Cache } from './cache'
 import { sort, timeToUntilString } from './dateutil'
 import { includes } from './helpers'
 import IterResult from './iterresult'
@@ -66,6 +67,12 @@ export class RRuleSet extends RRule {
     )
   }
 
+  private _invalidateCache() {
+    if (this._cache) {
+      this._cache = new Cache()
+    }
+  }
+
   /**
    * Adds an RRule to the set
    *
@@ -73,6 +80,7 @@ export class RRuleSet extends RRule {
    */
   rrule(rrule: RRule) {
     _addRule(rrule, this._rrule)
+    this._invalidateCache()
   }
 
   /**
@@ -82,6 +90,7 @@ export class RRuleSet extends RRule {
    */
   exrule(rrule: RRule) {
     _addRule(rrule, this._exrule)
+    this._invalidateCache()
   }
 
   /**
@@ -91,6 +100,7 @@ export class RRuleSet extends RRule {
    */
   rdate(date: Date) {
     _addDate(date, this._rdate)
+    this._invalidateCache()
   }
 
   /**
@@ -100,6 +110,7 @@ export class RRuleSet extends RRule {
    */
   exdate(date: Date) {
     _addDate(date, this._exdate)
+    this._invalidateCache()
   }
 
   /**
