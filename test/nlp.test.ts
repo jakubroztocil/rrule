@@ -67,6 +67,13 @@ describe('NLP', () => {
     })
   })
 
+  it('parses until dates as UTC calendar dates', () => {
+    const rule = RRule.fromText('Every day until March 29, 2023')
+
+    expect(rule.toString()).toBe('RRULE:FREQ=DAILY;UNTIL=20230329T000000Z')
+    expect(rule.toText()).toBe('every day until March 29, 2023')
+  })
+
   it('permits integers in byweekday (#153)', () => {
     const rrule = new RRule({
       freq: RRule.WEEKLY,
