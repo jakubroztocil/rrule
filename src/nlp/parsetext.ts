@@ -2,6 +2,7 @@ import ENGLISH, { Language } from './i18n'
 import { RRule } from '../rrule'
 import { ByWeekday, Options } from '../types'
 import { WeekdayStr } from '../weekday'
+import { datetime } from '../dateutil'
 
 // =============================================================================
 // Parser
@@ -426,10 +427,16 @@ export default function parseText(text: string, language: Language = ENGLISH) {
 
   function F() {
     if (ttr.symbol === 'until') {
-      const date = Date.parse(ttr.text)
+      const date = new Date(Date.parse(ttr.text))
 
-      if (!date) throw new Error('Cannot parse until date:' + ttr.text)
-      options.until = new Date(date)
+      if (isNaN(date.getTime())) {
+        throw new Error('Cannot parse until date:' + ttr.text)
+      }
+      options.until = datetime(
+        date.getFullYear(),
+        date.getMonth() + 1,
+        date.getDate()
+      )
     } else if (ttr.accept('for')) {
       options.count = parseInt(ttr.value[0], 10)
       ttr.expect('number')
