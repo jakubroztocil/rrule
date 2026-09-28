@@ -12,6 +12,14 @@ import { getWeekday, isDate, isValidDate } from './dateutil'
 import { Weekday } from './weekday'
 import { Time } from './datetime'
 
+function unique(values: number[]): number[] {
+  const result: number[] = []
+  for (const value of values) {
+    if (!includes(result, value)) result.push(value)
+  }
+  return result
+}
+
 export function initializeOptions(options: Partial<Options>) {
   const invalid: string[] = []
   const keys = Object.keys(options) as (keyof Options)[]
@@ -180,6 +188,8 @@ export function parseOptions(options: Partial<Options>) {
     opts.byhour = opts.freq < RRule.HOURLY ? [opts.dtstart.getUTCHours()] : null
   } else if (isNumber(opts.byhour)) {
     opts.byhour = [opts.byhour]
+  } else {
+    opts.byhour = unique(opts.byhour)
   }
 
   // byminute
@@ -188,6 +198,8 @@ export function parseOptions(options: Partial<Options>) {
       opts.freq < RRule.MINUTELY ? [opts.dtstart.getUTCMinutes()] : null
   } else if (isNumber(opts.byminute)) {
     opts.byminute = [opts.byminute]
+  } else {
+    opts.byminute = unique(opts.byminute)
   }
 
   // bysecond
@@ -196,6 +208,8 @@ export function parseOptions(options: Partial<Options>) {
       opts.freq < RRule.SECONDLY ? [opts.dtstart.getUTCSeconds()] : null
   } else if (isNumber(opts.bysecond)) {
     opts.bysecond = [opts.bysecond]
+  } else {
+    opts.bysecond = unique(opts.bysecond)
   }
 
   return { parsedOptions: opts as ParsedOptions }
