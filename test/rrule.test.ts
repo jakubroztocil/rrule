@@ -2875,6 +2875,38 @@ describe('RRule', function () {
   )
 
   testRecurring(
+    'testMinutelyIntervalByHour',
+    new RRule({
+      freq: RRule.MINUTELY,
+      count: 3,
+      interval: 7,
+      byhour: [8, 10],
+      dtstart: parse('20261001T085630'),
+    }),
+    [
+      datetime(2026, 10, 1, 8, 56, 30),
+      datetime(2026, 10, 1, 10, 6, 30),
+      datetime(2026, 10, 1, 10, 13, 30),
+    ]
+  )
+
+  testRecurring(
+    'testMinutelyIntervalLargeByHour',
+    new RRule({
+      freq: RRule.MINUTELY,
+      count: 3,
+      interval: 61,
+      byhour: [8, 10],
+      dtstart: parse('20261001T080000'),
+    }),
+    [
+      datetime(2026, 10, 1, 8, 0),
+      datetime(2026, 10, 1, 10, 2),
+      datetime(2026, 10, 2, 8, 24),
+    ]
+  )
+
+  testRecurring(
     'testMinutelyByMonth',
     new RRule({
       freq: RRule.MINUTELY,
@@ -3372,6 +3404,128 @@ describe('RRule', function () {
       datetime(1997, 9, 2, 9, 0, 0),
       datetime(1997, 9, 3, 10, 1, 1),
       datetime(1997, 9, 4, 11, 2, 2),
+    ]
+  )
+
+  testRecurring(
+    'testSecondlyIntervalByMinuteBetween https://github.com/jkbrzt/rrule/issues/674',
+    {
+      rrule: new RRule({
+        freq: RRule.SECONDLY,
+        interval: 7,
+        byminute: [0],
+        dtstart: parse('20261001T080000'),
+      }),
+      method: 'between',
+      args: [
+        datetime(2026, 10, 1, 9, 0),
+        datetime(2026, 10, 1, 9, 0, 15),
+        true,
+      ],
+    },
+    [datetime(2026, 10, 1, 9, 0, 5), datetime(2026, 10, 1, 9, 0, 12)]
+  )
+
+  testRecurring(
+    'testSecondlyIntervalByHour',
+    new RRule({
+      freq: RRule.SECONDLY,
+      count: 4,
+      interval: 7,
+      byhour: [8, 10],
+      dtstart: parse('20261001T085956'),
+    }),
+    [
+      datetime(2026, 10, 1, 8, 59, 56),
+      datetime(2026, 10, 1, 10, 0, 1),
+      datetime(2026, 10, 1, 10, 0, 8),
+      datetime(2026, 10, 1, 10, 0, 15),
+    ]
+  )
+
+  testRecurring(
+    'testSecondlyIntervalByHourAndMinuteAndSecondAcrossYear',
+    new RRule({
+      freq: RRule.SECONDLY,
+      count: 3,
+      interval: 7,
+      byhour: [0, 23],
+      byminute: [59],
+      bysecond: [0, 5, 12],
+      dtstart: parse('20261231T235900'),
+    }),
+    [
+      datetime(2026, 12, 31, 23, 59),
+      datetime(2027, 1, 1, 0, 59, 5),
+      datetime(2027, 1, 1, 0, 59, 12),
+    ]
+  )
+
+  testRecurring(
+    'testSecondlyIntervalLargeByMinute',
+    new RRule({
+      freq: RRule.SECONDLY,
+      count: 3,
+      interval: 61,
+      byminute: [0],
+      dtstart: parse('20261001T080000'),
+    }),
+    [
+      datetime(2026, 10, 1, 8, 0),
+      datetime(2026, 10, 1, 10, 0, 59),
+      datetime(2026, 10, 1, 11, 0, 58),
+    ]
+  )
+
+  testRecurring(
+    'testSecondlyIntervalByMinuteAndWeekDay',
+    {
+      rrule: new RRule({
+        freq: RRule.SECONDLY,
+        interval: 11,
+        byminute: [0],
+        byweekday: [RRule.TH],
+        dtstart: parse('20261001T080000'),
+      }),
+      method: 'between',
+      args: [
+        datetime(2026, 10, 8, 8, 0),
+        datetime(2026, 10, 8, 8, 0, 15),
+        true,
+      ],
+    },
+    [datetime(2026, 10, 8, 8, 0, 2), datetime(2026, 10, 8, 8, 0, 13)]
+  )
+
+  testRecurring(
+    'testSecondlyIntervalByMinuteCount',
+    new RRule({
+      freq: RRule.SECONDLY,
+      count: 3,
+      interval: 7,
+      byminute: [0],
+      dtstart: parse('20261001T080056'),
+    }),
+    [
+      datetime(2026, 10, 1, 8, 0, 56),
+      datetime(2026, 10, 1, 9, 0, 5),
+      datetime(2026, 10, 1, 9, 0, 12),
+    ]
+  )
+
+  testRecurring(
+    'testSecondlyIntervalByMinuteUntil',
+    new RRule({
+      freq: RRule.SECONDLY,
+      interval: 7,
+      byminute: [0],
+      dtstart: parse('20261001T080056'),
+      until: datetime(2026, 10, 1, 9, 0, 12),
+    }),
+    [
+      datetime(2026, 10, 1, 8, 0, 56),
+      datetime(2026, 10, 1, 9, 0, 5),
+      datetime(2026, 10, 1, 9, 0, 12),
     ]
   )
 
