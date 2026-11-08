@@ -40,6 +40,12 @@ export function parseOptions(options: Partial<Options>) {
     throw new Error(`Invalid frequency: ${opts.freq} ${options.freq}`)
   }
 
+  validateRange('bymonth', opts.bymonth, 1, 12)
+  validateRange('bymonthday', opts.bymonthday, -31, 31, true)
+  validateRange('byhour', opts.byhour, 0, 23)
+  validateRange('byminute', opts.byminute, 0, 59)
+  validateRange('bysecond', opts.bysecond, 0, 60)
+
   if (!opts.dtstart) opts.dtstart = new Date(new Date().setMilliseconds(0))
 
   if (!isPresent(opts.wkst)) {
@@ -199,6 +205,31 @@ export function parseOptions(options: Partial<Options>) {
   }
 
   return { parsedOptions: opts as ParsedOptions }
+}
+
+function validateRange(
+  name: string,
+  value: number | number[] | null,
+  min: number,
+  max: number,
+  excludeZero = false
+) {
+  if (!isPresent(value)) return
+
+  for (const item of isArray(value) ? value : [value]) {
+    if (
+      !isNumber(item) ||
+      item % 1 !== 0 ||
+      item < min ||
+      item > max ||
+      (excludeZero && item === 0)
+    ) {
+      throw new Error(
+        `${name} must be an integer between ${min} and ${max}` +
+          (excludeZero ? ', excluding 0' : '')
+      )
+    }
+  }
 }
 
 export function buildTimeset(opts: ParsedOptions) {
